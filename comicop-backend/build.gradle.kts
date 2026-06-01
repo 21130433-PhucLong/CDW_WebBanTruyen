@@ -59,6 +59,16 @@ dependencies {
 
 	// Jackson — tự chuyển Java Object <-> JSON khi gọi/trả API
 	implementation("com.fasterxml.jackson.core:jackson-databind:2.19.0")
+
+	// Spring Security — bảo vệ API endpoint
+	implementation("org.springframework.boot:spring-boot-starter-security")
+
+	// JWT — tạo và xác thực token đăng nhập
+	implementation("io.jsonwebtoken:jjwt-api:0.12.3")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
+
+	// BCrypt — mã hoá password (có sẵn trong Spring Security, không cần thêm)
 }
 
 tasks.withType<Test> {
