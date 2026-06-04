@@ -7,11 +7,11 @@ import java.util.Optional;
 
 public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
     // Lấy wishlist của 1 account
-    List<Wishlist> findByAccountId(Long accountId);
+    List<Wishlist> findByAccount_UserID(Long accountId);
 
     // Kiểm tra đã thêm vào wishlist chưa
-    boolean existsByAccountIdAndProductId(Long accountId, Long productId);
+    boolean existsByAccount_UserIDAndProduct_ProductId(Long accountId, Long productId);
 
     // Tìm để xoá
-    Optional<Wishlist> findByAccountIdAndProductId(Long accountId, Long productId);
+    Optional<Wishlist> findByAccount_UserIDAndProduct_ProductId(Long accountId, Long productId);
 }

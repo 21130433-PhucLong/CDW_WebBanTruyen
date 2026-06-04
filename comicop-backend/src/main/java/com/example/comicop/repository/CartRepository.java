@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
     // Lấy giỏ hàng theo accountId — mỗi account 1 giỏ
-    Optional<Cart> findByAccountId(Long accountId);
+    Optional<Cart> findByAccount_UserID(Long accountId);
 }

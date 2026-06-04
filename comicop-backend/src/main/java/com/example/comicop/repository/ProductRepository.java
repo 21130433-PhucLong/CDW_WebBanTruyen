@@ -15,10 +15,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByIsFeaturedTrue();
 
     // Lấy sản phẩm theo thể loại
-    Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
+    Page<Product> findByCategory_CategoryId(Long categoryId, Pageable pageable);
 
     // Lấy sản phẩm theo tác giả
-    List<Product> findByAuthorId(Long authorId);
+    List<Product> findByAuthor_AuthorId(Long authorId);
 
     // Top 6 bán chạy nhất — sắp xếp theo soldCount giảm dần
     List<Product> findTop6ByOrderBySoldCountDesc();

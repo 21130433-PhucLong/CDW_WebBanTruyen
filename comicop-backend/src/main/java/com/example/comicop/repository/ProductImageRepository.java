@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ProductImageRepository extends JpaRepository<ProductImage, Long> {
     // Lấy tất cả ảnh của 1 product, sắp xếp theo sortOrder
-    List<ProductImage> findByProductIdOrderBySortOrder(Long productId);
+    List<ProductImage> findByProduct_ProductIdOrderBySortOrder(Long productId);
 }

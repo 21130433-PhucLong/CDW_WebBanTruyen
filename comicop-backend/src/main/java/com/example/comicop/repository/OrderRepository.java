@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<ComicOrder, Long> {
     // Lấy tất cả đơn hàng của 1 account — sắp xếp mới nhất trước
-    List<ComicOrder> findByAccountIdOrderByCreatedAtDesc(Long accountId);
+    List<ComicOrder> findByAccount_UserIDOrderByCreatedAtDesc(Long accountId);
 }

@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Lấy reviews của 1 product
-    List<Review> findByProductId(Long productId);
+    List<Review> findByProduct_ProductId(Long productId);
 
     // Kiểm tra user đã review product này chưa
-    boolean existsByAccountIdAndProductId(Long accountId, Long productId);
+    boolean existsByAccount_UserIDAndProduct_ProductId(Long accountId, Long productId);
 }
