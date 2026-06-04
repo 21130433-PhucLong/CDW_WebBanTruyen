@@ -26,19 +26,22 @@ public class AccountMapper {
     }
 
     // Chuyển từ DTO (nhận từ client) sang Entity (lưu vào DB)
+    // Dùng setter thay vì constructor để tránh lỗi khi Entity có thêm field mới
     public static Account accountDtoToAccount(AccountDto accountDto) {
-        return new Account(
-                accountDto.getUserID(),
-                accountDto.getUserName(),
-                accountDto.getPassword(),
-                accountDto.getEmail(),
-                accountDto.getPhone(),
-                accountDto.getFirstName(),
-                accountDto.getLastName(),
-                accountDto.getGender(),
-                accountDto.getImg(),
-                accountDto.getRole(),
-                accountDto.isActivated()
-        );
+        Account account = new Account();
+        account.setUserID(accountDto.getUserID());
+        account.setUserName(accountDto.getUserName());
+        account.setPassword(accountDto.getPassword());
+        account.setEmail(accountDto.getEmail());
+        account.setPhone(accountDto.getPhone());
+        account.setFirstName(accountDto.getFirstName());
+        account.setLastName(accountDto.getLastName());
+        account.setGender(accountDto.getGender());
+        account.setImg(accountDto.getImg());
+        account.setRole(accountDto.getRole());
+        account.setActivated(accountDto.isActivated());
+        // cart, addresses, wishlists không set ở đây
+        // vì chúng được quản lý riêng qua CartService, WishlistService
+        return account;
     }
 }
