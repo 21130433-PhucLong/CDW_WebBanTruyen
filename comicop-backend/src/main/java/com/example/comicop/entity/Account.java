@@ -2,6 +2,7 @@ package com.example.comicop.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
 
 // @Entity — đánh dấu class này là 1 bảng trong database
 // @Table(name = "account") — tên bảng trong PostgreSQL là "account"
@@ -58,6 +59,19 @@ public class Account {
     @Column(name = "is_activated")
     private boolean activated = true;
 
-    // Các quan hệ với Order, Cart sẽ thêm sau
+    // Quan hệ với Cart — 1 account có 1 giỏ hàng
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private Cart cart;
+
+    // Quan hệ với Address — 1 account có nhiều địa chỉ
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<Address> addresses;
+
+    // Quan hệ với Wishlist
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<Wishlist> wishlists;
     // khi tạo entity Order và Cart ở Ngày 6
 }
