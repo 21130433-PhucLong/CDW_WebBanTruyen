@@ -28,34 +28,48 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Tắt CSRF vì dùng JWT (không dùng session/cookie)
+
+                // Bật CORS cho Spring Security
+                .cors(cors -> {})
+
+                // Tắt CSRF vì dùng JWT
                 .csrf(csrf -> csrf.disable())
 
-                // Cấu hình quyền truy cập từng endpoint
+                // Cấu hình quyền truy cập
                 .authorizeHttpRequests(auth -> auth
-                        // Public — ai cũng gọi được (không cần đăng nhập)
+
+                        // Cho phép tất cả request OPTIONS (preflight CORS)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Public API
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/manga/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/authors/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/manga/*/reviews").permitAll()
 
-                        // Thymeleaf pages — public
-                        .requestMatchers("/", "/index", "/manga/**", "/login", "/register").permitAll()
+                        // Public pages
+                        .requestMatchers(
+                                "/",
+                                "/index",
+                                "/manga/**",
+                                "/login",
+                                "/register"
+                        ).permitAll()
 
                         // Admin only
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // Còn lại phải đăng nhập
+                        // Các request còn lại phải đăng nhập
                         .anyRequest().authenticated()
                 )
 
-                // Stateless — không dùng session, mỗi request tự xác thực bằng JWT
+                // Không dùng Session, chỉ dùng JWT
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // Thêm JwtFilter chạy trước UsernamePasswordAuthenticationFilter
+                // JWT filter
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
