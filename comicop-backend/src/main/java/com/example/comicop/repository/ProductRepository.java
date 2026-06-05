@@ -23,6 +23,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // Top 6 bán chạy nhất — sắp xếp theo soldCount giảm dần
     List<Product> findTop6ByOrderBySoldCountDesc();
 
-    // Sản phẩm mới nhất — sắp xếp theo createdAt
+    // 8 Sản phẩm mới nhất — sắp xếp theo createdAt
     List<Product> findTop8ByOrderByCreatedAtDesc();
 }

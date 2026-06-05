@@ -57,7 +57,6 @@ public class AuthServiceImpl implements AuthService {
         if (account == null) {
             throw new RuntimeException("Email không tồn tại");
         }
-
         // Kiểm tra password bằng BCrypt
         // passwordEncoder.matches() so sánh password thô với hash đã lưu
         if (!passwordEncoder.matches(request.getPassword(), account.getPassword())) {

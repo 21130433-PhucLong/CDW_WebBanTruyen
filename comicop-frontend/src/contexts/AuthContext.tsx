@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { User } from '../models/User';
-import { authService } from '../services/authService';
+import { authService, mapAccountDtoToUser } from '../services/authService';
 
 // Định nghĩa kiểu dữ liệu của AuthContext
 interface AuthContextType {
@@ -36,11 +36,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const token = localStorage.getItem('token');
         if (token) {
           const response = await authService.getCurrentUser();
-          setUser(response.data);
+          setUser(mapAccountDtoToUser(response.data));
         }
       } catch (error) {
         // Token hết hạn hoặc lỗi → xoá token
-        console.error('Lỗi khởi tạo auth:', error);
         localStorage.removeItem('token');
       } finally {
         // Dù thành công hay lỗi đều tắt loading
@@ -59,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { user, token } = response.data;
       // Lưu token vào localStorage để dùng cho các request sau
       localStorage.setItem('token', token);
-      setUser(user);
+      setUser(mapAccountDtoToUser(user));
     } catch (error: any) {
       setError(error.response?.data?.message || 'Đăng nhập thất bại');
       throw error;
@@ -79,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await authService.register(data);
       const { user, token } = response.data;
       localStorage.setItem('token', token);
-      setUser(user);
+      setUser(mapAccountDtoToUser(user));
     } catch (error: any) {
       setError(error.response?.data?.message || 'Đăng ký thất bại');
       throw error;
@@ -104,7 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setError(null);
       const response = await authService.updateProfile(data);
-      setUser(response.data);
+      setUser(mapAccountDtoToUser(response.data));
     } catch (error: any) {
       setError(error.response?.data?.message || 'Cập nhật thất bại');
       throw error;

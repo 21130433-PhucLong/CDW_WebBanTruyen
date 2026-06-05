@@ -1,6 +1,25 @@
 import api from './api';
 import type { User, AuthResponse } from '../models/User';
 
+
+// Hàm chuyển AccountDto từ backend sang User interface của frontend
+// Cần vì backend và frontend dùng tên field khác nhau
+export const mapAccountDtoToUser = (dto: any):User => ({
+  id: dto.userID,
+  username: dto.userName,
+  email: dto.email,
+  firstName: dto.firstName || '',
+  lastName: dto.lastName || '',
+  avatar: dto.img,
+  phoneNumber: dto.phone,
+  addresses: [],
+  orderHistory: [],
+  wishlist: [],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  role: dto.role?.toLowerCase() === 'admin' ? 'admin' : 'user',
+})
+
 // authService — tất cả API call liên quan đến xác thực
 // Dùng instance api đã có interceptor JWT tự động
 export const authService = {
