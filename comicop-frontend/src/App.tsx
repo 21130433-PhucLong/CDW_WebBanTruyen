@@ -3,19 +3,18 @@ import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout/Layout'
 import PrivateRoute from './components/common/PrivateRoute'
 
-// Import Login và Register thật — đã làm hôm nay
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
-
+import Home from './pages/Home'
+import Manga from './pages/Manga'
 // Các trang còn lại vẫn là placeholder — sẽ thay dần từng ngày
-const Home = () => <div style={{padding:'2rem'}}>🏠 Trang chủ — Ngày 8</div>
+
 const MangaDetail = () => <div style={{padding:'2rem'}}>📖 Chi tiết manga — Ngày 9</div>
 const Cart = () => <div style={{padding:'2rem'}}>🛒 Giỏ hàng — Ngày 10</div>
 const Search = () => <div style={{padding:'2rem'}}>🔍 Tìm kiếm — Ngày 9</div>
 const Checkout = () => <div style={{padding:'2rem'}}>💳 Thanh toán — Ngày 13</div>
 const OrderHistory = () => <div style={{padding:'2rem'}}>📋 Lịch sử đơn — Ngày 13</div>
 const Profile = () => <div style={{padding:'2rem'}}>👤 Hồ sơ — Ngày 15</div>
-const Manga = () => <div style={{padding:'2rem'}}>📚 Danh sách manga — Ngày 8</div>
 const ReadManga = () => <div style={{padding:'2rem'}}>📄 Đọc thử — Ngày 9</div>
 const AuthorDetail = () => <div style={{padding:'2rem'}}>✍️ Tác giả — Ngày 9</div>
 const MangaNews = () => <div style={{padding:'2rem'}}>📰 Tin tức — Ngày 9</div>
