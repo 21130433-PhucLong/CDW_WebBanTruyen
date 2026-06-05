@@ -5,7 +5,8 @@ import LoadingSpinner from '../components/common/LoadingSpinner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBook } from '@fortawesome/free-solid-svg-icons'
 import { mangaService } from '../services/mangaService'
-import type { Manga, Category, Author } from '../models/types'
+import type { Manga, Category } from '../models/types'
+import type { Author } from '../models/Manga'
 
 const Home: React.FC = () => {
   // State cho từng section — không dùng mockData
