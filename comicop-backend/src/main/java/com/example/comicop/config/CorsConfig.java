@@ -17,22 +17,18 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Cho phép frontend localhost:3000 gọi API
+        // Local development
         config.addAllowedOrigin("http://localhost:3000");
 
-        // Cho phép tất cả HTTP methods
+        // ← Thêm link Vercel thật của bạn vào đây
+        config.addAllowedOrigin("https://comicop.vercel.app");
+
         config.addAllowedMethod("*");
-
-        // Cho phép tất cả headers kể cả Authorization (JWT)
         config.addAllowedHeader("*");
-
-        // Cho phép gửi credentials (cookie, Authorization header)
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Áp dụng config này cho tất cả endpoint /**
         source.registerCorsConfiguration("/**", config);
-
         return new CorsFilter(source);
     }
 }
