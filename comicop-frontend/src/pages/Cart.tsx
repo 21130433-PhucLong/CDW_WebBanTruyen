@@ -33,7 +33,6 @@ const Cart: React.FC = () => {
 
   if (isLoading) return <LoadingSpinner />
 
-  // Giỏ hàng trống — y chang zip
   if (!cart || cart.items.length === 0) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -57,7 +56,6 @@ const Cart: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        {/* Danh sách sản phẩm — y chang zip */}
         <div className="lg:col-span-2">
           <div className="space-y-4">
             {cart.items.map((item) => (
@@ -67,8 +65,8 @@ const Cart: React.FC = () => {
               >
                 {/* Ảnh sản phẩm */}
                 <img
-                  src={item.manga.coverImage}
-                  alt={item.manga.title}
+                  src={item.coverImage}
+                  alt={item.title}
                   className="w-24 h-36 object-cover rounded"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src =
@@ -78,19 +76,18 @@ const Cart: React.FC = () => {
 
                 <div className="flex-1">
                   <Link
-                    to={`/manga/${item.manga.id}`}
+                    to={`/manga/${item.mangaId}`}
                     className="text-lg font-medium hover:text-indigo-600"
                   >
-                    {item.manga.title}
+                    {item.title}
                   </Link>
                   <p className="text-gray-500">
-                    {item.manga.author?.name}
+                    {item.authorName}
                   </p>
                   <p className="text-indigo-600 font-medium">
-                    {item.manga.price?.toLocaleString('vi-VN')} ₫
+                    {(item.price || 0).toLocaleString('vi-VN')} ₫
                   </p>
 
-                  {/* Nút +/- và xoá — y chang zip */}
                   <div className="flex items-center space-x-4 mt-2">
                     <div className="flex items-center border border-gray-300 rounded-md">
                       <button
@@ -122,10 +119,9 @@ const Cart: React.FC = () => {
                 </div>
 
                 {/* Thành tiền */}
-                <div className="text-right">
-                  <p className="font-medium">
-                    {(item.manga.price * item.quantity)
-                      .toLocaleString('vi-VN')} ₫
+                <div className="text-right min-w-[100px]">
+                  <p className="font-semibold text-gray-900">
+                    {(item.totalPrice || 0).toLocaleString('vi-VN')} ₫
                   </p>
                 </div>
               </div>
@@ -133,7 +129,6 @@ const Cart: React.FC = () => {
           </div>
         </div>
 
-        {/* Tổng đơn hàng — y chang zip + thêm miễn phí ship */}
         <div className="lg:col-span-1">
           <div className="border border-gray-200 rounded-lg p-6 space-y-4">
             <h2 className="text-xl font-bold">Tổng đơn hàng</h2>

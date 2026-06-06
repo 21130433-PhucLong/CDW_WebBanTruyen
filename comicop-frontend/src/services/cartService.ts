@@ -1,15 +1,15 @@
 import api from './api';
-import type { Cart, Order, CheckoutDetails } from '../models/Cart';
+import type { CartDto, Order, CheckoutDetails } from '../models/Cart';
 
 export const cartService = {
   // Cart operations
-  getCart: () => api.get<Cart>('/cart'),
+  getCart: () => api.get<CartDto>('/cart'),
 
   addToCart: (mangaId: number, quantity: number = 1) =>
-    api.post<Cart>('/cart/items', { mangaId, quantity }),
+    api.post<CartDto>('/cart/items', { mangaId, quantity }),
 
   updateQuantity: (itemId: number, quantity: number) =>
-    api.put<Cart>(`/cart/items/${itemId}`, { quantity }),
+    api.put<CartDto>(`/cart/items/${itemId}`, { quantity }),
 
   removeFromCart: (itemId: number) =>
     api.delete(`/cart/items/${itemId}`),
