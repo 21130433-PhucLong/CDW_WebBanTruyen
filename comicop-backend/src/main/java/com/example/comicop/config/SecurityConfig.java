@@ -59,8 +59,11 @@ public class SecurityConfig {
 
                         // Admin only
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/cart/**").authenticated()
+                        .requestMatchers("/api/wishlist/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/manga/*/wishlist").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/manga/*/wishlist").authenticated()
 
-                        // Các request còn lại phải đăng nhập
                         .anyRequest().authenticated()
                 )
 

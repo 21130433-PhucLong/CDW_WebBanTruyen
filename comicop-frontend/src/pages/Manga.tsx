@@ -4,7 +4,6 @@ import MangaCard from '../components/common/MangaCard'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilter } from '@fortawesome/free-solid-svg-icons'
-import { mangaService } from '../services/mangaService'
 import type { Manga, Category } from '../models/types'
 import api from '../services/api'
 
