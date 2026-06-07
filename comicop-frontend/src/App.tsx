@@ -12,7 +12,7 @@ import Search from './pages/Search'
 import AuthorDetail from './pages/AuthorDetail'
 import MangaNews from './pages/MangaNews'
 import Cart from './pages/Cart'
-import Checkout from './pages/checkout/checkout'
+import Checkout from './pages/checkout/Checkout'
 import OrderHistory from './pages/user/OrderHistory'
 
 // Các trang còn lại vẫn là placeholder — sẽ thay dần từng ngày
