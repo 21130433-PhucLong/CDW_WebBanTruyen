@@ -12,5 +12,5 @@ interface VoucherDto {
 export const voucherService = {
   // Validate mã voucher — GET /api/vouchers/validate?code=
   validate: (code: string) =>
-    api.get<VoucherDto>(`/vouchers/validate?code=${code}`),
+    api.get<VoucherDto>(`/vouchers/validate?code=${encodeURIComponent(code)}`),
 }

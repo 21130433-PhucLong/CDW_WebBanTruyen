@@ -12,10 +12,10 @@ import Search from './pages/Search'
 import AuthorDetail from './pages/AuthorDetail'
 import MangaNews from './pages/MangaNews'
 import Cart from './pages/Cart'
-// Các trang còn lại vẫn là placeholder — sẽ thay dần từng ngày
+import Checkout from './pages/checkout/checkout'
+import OrderHistory from './pages/user/OrderHistory'
 
-const Checkout = () => <div style={{padding:'2rem'}}>💳 Thanh toán </div>
-const OrderHistory = () => <div style={{padding:'2rem'}}>📋 Lịch sử đơn </div>
+// Các trang còn lại vẫn là placeholder — sẽ thay dần từng ngày
 const Profile = () => <div style={{padding:'2rem'}}>👤 Hồ sơ </div>
 const Admin = () => <div style={{padding:'2rem'}}>⚙️ Admin</div>
 

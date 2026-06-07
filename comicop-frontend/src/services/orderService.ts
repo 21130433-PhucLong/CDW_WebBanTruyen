@@ -4,7 +4,7 @@ import type { Order } from '../models/Cart'
 // Interface cho request tạo đơn hàng
 interface CreateOrderRequest {
   shippingAddress: string
-  paymentMethod: 'cod'
+  paymentMethod: string
   note?: string
   voucherCode?: string
 }

@@ -8,9 +8,9 @@ const Footer: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* About */}
                     <div>
-                        <h3 className="text-lg font-semibold mb-4">Về MangaStore</h3>
+                        <h3 className="text-lg font-semibold mb-4">Về Comicop</h3>
                         <p className="text-gray-400">
-                            Chúng tôi cung cấp những bộ manga chất lượng với giá cả hợp lý nhất cho người hâm mộ manga tại Việt Nam.
+                            Comicop - Nhà sách online bán truyện tranh, manga chất lượng với giá cả hợp lý.
                         </p>
                     </div>
 
@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
                     <div>
                         <h3 className="text-lg font-semibold mb-4">Liên hệ</h3>
                         <ul className="space-y-2 text-gray-400">
-                            <li>Email: contact@mangastore.com</li>
+                            <li>Email: contact@comicop.com</li>
                             <li>Điện thoại: (84) 123-456-789</li>
                             <li>Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM</li>
                         </ul>

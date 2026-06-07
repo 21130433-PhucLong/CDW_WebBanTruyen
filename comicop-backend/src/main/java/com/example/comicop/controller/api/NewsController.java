@@ -15,7 +15,7 @@ public class NewsController {
 
     @GetMapping
     public ResponseEntity<Object> getNews(
-            @RequestParam(defaultValue = "Manga Anime") String q,
+            @RequestParam(defaultValue = "manga") String q,
             @RequestParam(defaultValue = "vi") String lang,
             @RequestParam(defaultValue = "10") int max) {
 
@@ -34,8 +34,13 @@ public class NewsController {
             Object response = restTemplate.getForObject(url, Object.class);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // GNews lỗi → trả về mảng rỗng thay vì crash
-            return ResponseEntity.ok(java.util.Map.of("articles", java.util.List.of()));
+            e.printStackTrace();
+
+            return ResponseEntity.internalServerError().body(
+                    java.util.Map.of(
+                            "error", e.getMessage()
+                    )
+            );
         }
     }
 }
