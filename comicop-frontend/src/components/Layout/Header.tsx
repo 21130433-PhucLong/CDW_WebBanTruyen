@@ -120,7 +120,7 @@ const Header: React.FC = () => {
                                     className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600 focus:outline-none transition-colors"
                                 >
                                     <img
-                                        src={user.avatar || '/default-avatar.png'}
+                                        src={user.avatar || '/images/authors/author.jpg'}
                                         alt={user.username}
                                         className="w-10 h-10 rounded-full object-cover"
                                     />

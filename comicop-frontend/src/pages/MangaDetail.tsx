@@ -219,20 +219,23 @@ const MangaDetail: React.FC = () => {
           </div>
 
           {/* Nút thêm giỏ hàng + wishlist */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center border border-gray-300 rounded-md">
+          <div className="flex items-center gap-4 mt-6">
+            <div className="flex items-center border-2 border-indigo-300 rounded-xl overflow-hidden shadow-sm">
               <button
                 onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                className="px-3 py-1 text-gray-600 hover:bg-gray-100"
+                className="w-12 h-12 flex items-center justify-center text-2xl font-bold
+        text-indigo-600 hover:bg-indigo-50 active:bg-indigo-100 transition-colors"
               >
                 -
               </button>
-              <span className="px-4 py-1 border-x border-gray-300">
+              <span className="w-14 h-12 flex items-center justify-center
+      text-xl font-semibold border-x-2 border-indigo-300 bg-white">
                 {quantity}
               </span>
               <button
                 onClick={() => setQuantity(q => q + 1)}
-                className="px-3 py-1 text-gray-600 hover:bg-gray-100"
+                className="w-12 h-12 flex items-center justify-center text-2xl font-bold
+        text-indigo-600 hover:bg-indigo-50 active:bg-indigo-100 transition-colors"
               >
                 +
               </button>
@@ -244,7 +247,7 @@ const MangaDetail: React.FC = () => {
               className="flex-1 bg-indigo-600 text-white py-2 px-6 rounded-md
                 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {addingToCart ? 'Đang thêm...' : 'Thêm vào giỏ hàng'}
+              {addingToCart ? 'Đang thêm...' : '🛒 Thêm vào giỏ hàng'}
             </button>
 
             {/* Nút yêu thích */}

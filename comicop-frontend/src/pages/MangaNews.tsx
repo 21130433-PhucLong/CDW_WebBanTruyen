@@ -21,23 +21,19 @@ const MangaNews: React.FC = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        // GNews API — dùng token từ .env
-        const response = await axios.get('https://gnews.io/api/v4/search', {
-          params: {
-            q: 'Manga OR Anime Japan',
-            lang: 'vi',
-            max: 20,
-            token: import.meta.env.VITE_APP_GNEWS_API_TOKEN,
-          },
-        })
-        setArticles(response.data.articles)
+        // Gọi qua backend — tránh CORS
+        const response = await axios.get(
+          `${import.meta.env.VITE_APP_API_URL}/news`
+        )
+       // GNews trả về { articles: [...] }
+       setArticles(response.data.articles || [])
       } catch (err: any) {
-        setError(err.message || 'Đã xảy ra lỗi khi tải tin tức.')
-      } finally {
-        setLoading(false)
-      }
+        setError('Không thể tải tin tức.')
+     } finally {
+       setLoading(false)
+     }
     }
-    fetchNews()
+   fetchNews()
   }, [])
 
   if (loading) return <LoadingSpinner />

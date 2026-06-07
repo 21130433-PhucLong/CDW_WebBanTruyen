@@ -47,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/authors/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/manga/*/reviews").permitAll()
-
+                        .requestMatchers(HttpMethod.GET, "/api/news").permitAll()
                         // Public pages
                         .requestMatchers(
                                 "/",
@@ -56,6 +56,11 @@ public class SecurityConfig {
                                 "/login",
                                 "/register"
                         ).permitAll()
+                        // Voucher validate — public, không cần đăng nhập
+                        .requestMatchers(HttpMethod.GET, "/api/vouchers/validate").permitAll()
+
+                        // Order — cần đăng nhập
+                        .requestMatchers("/api/orders/**").authenticated()
 
                         // Admin only
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")

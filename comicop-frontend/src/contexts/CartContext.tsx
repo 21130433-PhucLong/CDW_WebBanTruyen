@@ -171,13 +171,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setError(null);
       if (user) {
-        await cartService.removeFromCart(itemId);
+        // Dùng response từ API — backend tính lại đúng hơn
+        const response = await cartService.removeFromCart(itemId);
+        setCart(response.data ?? EMPTY_CART);
+      } else {
+        setCart(prevCart => {
+          if (!prevCart) return EMPTY_CART;
+          const updatedItems = prevCart.items.filter(item => item.id !== itemId);
+          return recalculate(updatedItems);
+        });
       }
-      setCart(prevCart => {
-        if (!prevCart) return EMPTY_CART;
-        const updatedItems = prevCart.items.filter(item => item.id !== itemId);
-        return recalculate(updatedItems);
-      });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Không thể xóa sản phẩm');
       throw err;
