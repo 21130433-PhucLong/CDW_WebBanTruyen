@@ -1,0 +1,6 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "build": {
+    "buildCommand": "bash ./gradlew build -x test"
+  }
+}
