@@ -25,8 +25,6 @@ const MangaDetail: React.FC = () => {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [addingToCart, setAddingToCart] = useState(false)
 
-  const [selectedImage, setSelectedImage] = useState<string>('')
-
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxImage, setLightboxImage] = useState('')
@@ -42,7 +40,7 @@ const MangaDetail: React.FC = () => {
           mangaService.getRelated(Number(id)),
         ])
         setManga(mangaRes.data)
-        setSelectedImage(mangaRes.data.coverImage)
+        setSelectedIndex(0)
         setRelatedManga(relatedRes.data)
       } catch (err) {
         setError('Không thể tải thông tin manga.')
