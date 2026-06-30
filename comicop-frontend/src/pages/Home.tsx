@@ -72,10 +72,6 @@ const Home: React.FC = () => {
     <div className="space-y-12">
 
       {/* ── Hero Section ── */}
-      {/* 📌 TODO: Thay /images/background.jpg bằng ảnh banner thật
-          Cách làm: tạo thư mục public/images/ trong comicop-frontend/
-          Tải ảnh về đặt vào đó tên background.jpg
-          Hoặc dùng link ảnh từ Internet */}
       <section
         className="relative h-96 bg-cover bg-center"
         style={{
@@ -89,14 +85,14 @@ const Home: React.FC = () => {
               Khám phá thế giới Manga
             </h1>
             <p className="text-lg mb-8">
-              Thư viện truyện đa dạng với hàng nghìn tựa truyện
-              từ nhiều thể loại khác nhau.
+              Thư viện truyện đa dạng với hàng trăm tựa truyện
+              từ nhiều thể loại khác nhau - Giao hàng miễn phí toàn quốc với đơn từ 150.000đ 
             </p>
             <Link
               to="/manga"
               className="bg-white text-indigo-600 px-6 py-3 rounded-md font-semibold hover:bg-gray-100"
             >
-              Khám phá ngay
+              Mua ngay
             </Link>
           </div>
         </div>
@@ -106,7 +102,7 @@ const Home: React.FC = () => {
       <section className="container mx-auto px-4">
         <h2 className="text-2xl font-bold mb-6">Manga nổi bật</h2>
         {featuredManga.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 p-1">
             {featuredManga.map((manga) => (
               <MangaCard key={manga.id} manga={manga} />
             ))}
@@ -120,7 +116,7 @@ const Home: React.FC = () => {
       <section className="container mx-auto px-4">
         <h2 className="text-2xl font-bold mb-6">Mới phát hành</h2>
         {newReleases.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 p-1">
             {newReleases.map((manga) => (
               <MangaCard key={manga.id} manga={manga} />
             ))}
@@ -133,7 +129,7 @@ const Home: React.FC = () => {
       {/* ── Categories ── */}
       <section className="container mx-auto px-4">
         <h2 className="text-2xl font-bold mb-6">Thể loại truyện</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5 p-1">
           {categories.map((category) => (
             <Link
               key={category.id}
@@ -155,7 +151,7 @@ const Home: React.FC = () => {
       {/* ── Popular Authors ── */}
       <section className="container mx-auto px-4 pb-12">
         <h2 className="text-2xl font-bold mb-6">Tác giả nổi tiếng</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5 p-1">
           {popularAuthors.map((author) => (
             <div
               key={author.id}

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import type { Manga } from '../../models/types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
+import { useCart } from '../../contexts/CartContext'
+import { useNavigate } from 'react-router-dom'
 
 interface MangaCardProps {
   manga: Manga
@@ -27,8 +29,11 @@ const getStatusLabel = (status: string) => {
 }
 
 const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
+  const { addToCart } = useCart()
+  const navigate = useNavigate()
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-indigo-300
+        shadow-sm hover:shadow-md transition-all duration-200">
       {/* Ảnh bìa — click vào → chi tiết manga */}
       <Link to={`/manga/${manga.id}`}>
         <img
@@ -68,7 +73,7 @@ const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
 
         {/* Giá + trạng thái */}
         <div className="mt-2">
-          <span className="block text-indigo-600 font-medium">
+          <span className="block text-red-500 font-medium">
             {manga.price?.toLocaleString('vi-VN')} ₫
           </span>
           <span
@@ -79,6 +84,24 @@ const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
           </span>
         </div>
       </div>
+
+      <div className="px-4 pb-4">
+        <button
+          onClick={async (e) => {
+            e.preventDefault() // không navigate vào trang chi tiết
+            try {
+              await addToCart(manga.id, 1)
+            } catch {
+              navigate('/login')
+            }
+          }}
+          className="w-full py-2 bg-blue-600 text-white text-sm font-medium
+            rounded-lg hover:bg-blue-800 active:bg-indigo-800 transition-colors"
+        >
+          + Thêm vào giỏ
+        </button>
+      </div>
+
     </div>
   )
 }
