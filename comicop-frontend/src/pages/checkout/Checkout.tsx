@@ -272,7 +272,7 @@ const Checkout: React.FC = () => {
               </div>
               <div className="border-t pt-2 flex justify-between font-bold text-lg">
                 <span>Tổng cộng</span>
-                <span className="text-indigo-600">
+                <span className="text-red-500">
                   {total.toLocaleString('vi-VN')} ₫
                 </span>
               </div>

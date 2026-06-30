@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
                         <div key={i} className="flex items-center gap-2 justify-center">
                         <span className="text-xl">{item.icon}</span>
                         <div className="text-left">
-                            <p className="font-medium text-white text-xs">{item.title}</p>
+                            <p className="font-medium text-white text-xs mt-2">{item.title}</p>
                             <p className="text-gray-300 text-xs">{item.sub}</p>
                         </div>
                         </div>

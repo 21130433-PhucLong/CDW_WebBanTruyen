@@ -161,7 +161,7 @@ const MangaPage: React.FC = () => {
 
             {/* Phân trang */}
             {totalPages > 1 && (
-              <div className="flex justify-center gap-2 mt-10">
+              <div className="flex justify-center gap-2 mt-10 mb-3">
                 <button
                   onClick={() => setCurrentPage(p => Math.max(p - 1, 0))}
                   disabled={currentPage === 0}

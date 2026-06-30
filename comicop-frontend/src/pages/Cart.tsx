@@ -52,7 +52,15 @@ const Cart: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Giỏ hàng</h1>
+      <h1 className="text-3xl font-bold mb-2">Giỏ hàng</h1>
+      {/* Dòng thông báo tổng số sản phẩm — cộng dồn quantity, không phải số dòng */}
+      <p className="text-gray-600 mb-8">
+        Bạn đang có{' '}
+        <span className="font-bold text-red-600">
+          {cart.items.reduce((sum, item) => sum + item.quantity, 0)}
+        </span>{' '}
+        sản phẩm trong giỏ hàng
+      </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -162,7 +170,7 @@ const Cart: React.FC = () => {
 
             <div className="flex justify-between py-2 font-bold text-lg">
               <span>Tổng cộng</span>
-              <span className="text-indigo-600">
+              <span className="text-red-500">
                 {cart.total?.toLocaleString('vi-VN')} ₫
               </span>
             </div>
@@ -177,7 +185,7 @@ const Cart: React.FC = () => {
 
             <Link
               to="/manga"
-              className="block text-center text-indigo-600 hover:text-indigo-700"
+              className="block text-center text-indigo-600 hover:text-indigo-700 mt-3"
             >
               Tiếp tục mua sắm
             </Link>

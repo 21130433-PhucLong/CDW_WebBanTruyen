@@ -116,7 +116,7 @@ const MangaDetail: React.FC = () => {
                 <img
                   src={allImages[selectedIndex] || manga.coverImage}
                   alt={manga.title}
-                  className="w-full rounded-lg shadow-lg object-cover cursor-zoom-in"
+                  className="w-full rounded-lg shadow-lg object-contain cursor-zoom-in"
                   style={{ maxHeight: '500px' }}
                   onClick={() => {
                     setLightboxImage(allImages[selectedIndex] || manga.coverImage)

@@ -39,7 +39,7 @@ const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
         <img
           src={manga.coverImage}
           alt={manga.title}
-          className="w-full h-64 object-cover"
+          className="w-full h-64 object-contain"
           loading="lazy"
           // Ảnh mặc định nếu link bị lỗi
           onError={(e) => {
