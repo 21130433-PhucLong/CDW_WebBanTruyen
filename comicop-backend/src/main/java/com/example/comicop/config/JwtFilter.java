@@ -32,8 +32,11 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
+        System.out.println("JWT FILTER: " + request.getRequestURI());
         // Đọc header Authorization: "Bearer eyJhbGc..."
         final String authHeader = request.getHeader("Authorization");
+
+        System.out.println("Authorization = " + authHeader);
 
         // Nếu không có header hoặc không bắt đầu bằng "Bearer " → bỏ qua
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -60,11 +63,15 @@ public class JwtFilter extends OncePerRequestFilter {
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_" + role))
                     );
+
+                    System.out.println("JWT OK: " + email);
+
                     // Set vào SecurityContext → Spring biết request này được xác thực
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             // Token không hợp lệ → bỏ qua, không set authentication
             // Request sẽ bị từ chối ở SecurityConfig nếu endpoint cần auth
         }
