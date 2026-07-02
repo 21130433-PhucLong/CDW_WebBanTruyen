@@ -42,7 +42,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Public API
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/manga/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/authors/**").permitAll()
@@ -62,6 +63,9 @@ public class SecurityConfig {
                         // Order — cần đăng nhập
                         .requestMatchers("/api/orders/**").authenticated()
 
+                        .requestMatchers(HttpMethod.POST, "/api/auth/avatar").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated()
                         // Admin only
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/cart/**").authenticated()

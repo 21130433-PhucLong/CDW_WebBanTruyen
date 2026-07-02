@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 // @AuthenticationPrincipal — lấy email của user đang đăng nhập
 // Spring Security tự inject email từ JWT token đã được xác thực trong JwtFilter
@@ -52,8 +53,21 @@ public class AuthController {
     @PostMapping("/avatar")
     public ResponseEntity<AccountDto> uploadAvatar(
             @AuthenticationPrincipal String email,
-            @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+            @RequestParam("file") MultipartFile file) {
         AccountDto updated = authService.updateAvatar(email, file);
         return ResponseEntity.ok(updated);
     }
+
+//    @PostMapping("/avatar")
+//    public ResponseEntity<AccountDto> uploadAvatar(
+//            @AuthenticationPrincipal String email,
+//            @RequestParam("file") MultipartFile file) {
+//
+//        System.out.println("EMAIL = " + email);
+//        System.out.println("FILE = " + file.getOriginalFilename());
+//
+//        AccountDto updated = authService.updateAvatar(email, file);
+//        return ResponseEntity.ok(updated);
+//
+//    }
 }
