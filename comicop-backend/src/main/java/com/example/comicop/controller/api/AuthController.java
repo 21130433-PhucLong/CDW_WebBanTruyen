@@ -50,24 +50,24 @@ public class AuthController {
         return ResponseEntity.ok("Đăng xuất thành công");
     }
 
-    @PostMapping("/avatar")
-    public ResponseEntity<AccountDto> uploadAvatar(
-            @AuthenticationPrincipal String email,
-            @RequestParam("file") MultipartFile file) {
-        AccountDto updated = authService.updateAvatar(email, file);
-        return ResponseEntity.ok(updated);
-    }
-
 //    @PostMapping("/avatar")
 //    public ResponseEntity<AccountDto> uploadAvatar(
 //            @AuthenticationPrincipal String email,
 //            @RequestParam("file") MultipartFile file) {
-//
-//        System.out.println("EMAIL = " + email);
-//        System.out.println("FILE = " + file.getOriginalFilename());
-//
 //        AccountDto updated = authService.updateAvatar(email, file);
 //        return ResponseEntity.ok(updated);
-//
 //    }
+
+    @PostMapping("/avatar")
+    public ResponseEntity<AccountDto> uploadAvatar(
+            @AuthenticationPrincipal String email,
+            @RequestParam("file") MultipartFile file) {
+
+        System.out.println("========== AVATAR API ==========");
+        System.out.println("EMAIL = " + email);
+        System.out.println("FILE = " + file.getOriginalFilename());
+
+        AccountDto updated = authService.updateAvatar(email, file);
+        return ResponseEntity.ok(updated);
+    }
 }
