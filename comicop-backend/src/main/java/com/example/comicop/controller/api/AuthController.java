@@ -48,4 +48,12 @@ public class AuthController {
     public ResponseEntity<String> logout() {
         return ResponseEntity.ok("Đăng xuất thành công");
     }
+
+    @PostMapping("/avatar")
+    public ResponseEntity<AccountDto> uploadAvatar(
+            @AuthenticationPrincipal String email,
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        AccountDto updated = authService.updateAvatar(email, file);
+        return ResponseEntity.ok(updated);
+    }
 }

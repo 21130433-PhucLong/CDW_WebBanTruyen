@@ -4,6 +4,7 @@ import com.example.comicop.dto.AccountDto;
 import com.example.comicop.dto.AuthRequest;
 import com.example.comicop.dto.AuthResponse;
 import com.example.comicop.dto.RegisterRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface AuthService {
     // Đăng ký tài khoản mới, trả về token + user
@@ -14,4 +15,7 @@ public interface AuthService {
 
     // Lấy thông tin user hiện tại từ email (đọc từ JWT)
     AccountDto getCurrentUser(String email);
+
+    // Method mới — cập nhật avatar
+    AccountDto updateAvatar(String email, MultipartFile file);
 }

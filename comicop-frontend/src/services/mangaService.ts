@@ -5,6 +5,7 @@ export const mangaService = {
   // Danh sách manga — có phân trang
   getFeatured: () => api.get<Manga[]>('/manga/featured'),
   getNewReleases: () => api.get<Manga[]>('/manga/new'),
+  getTopSelling: () => api.get<any>('/manga/top-selling'),
   getByCategory: (categoryId: number) =>
     api.get<Manga[]>(`/categories/${categoryId}/manga`),
   search: (query: string) =>

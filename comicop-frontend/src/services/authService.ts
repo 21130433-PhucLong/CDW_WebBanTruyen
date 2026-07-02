@@ -3,15 +3,14 @@ import type { User, AuthResponse } from '../models/User';
 
 
 // Hàm chuyển AccountDto từ backend sang User interface của frontend
-// Cần vì backend và frontend dùng tên field khác nhau
 export const mapAccountDtoToUser = (dto: any):User => ({
   id: dto.userID,
-  username: dto.userName,
-  email: dto.email,
+  username: dto.userName || dto.username || '',
+  email: dto.email || '',
   firstName: dto.firstName || '',
   lastName: dto.lastName || '',
-  avatar: dto.img,
-  phoneNumber: dto.phone,
+  avatar: dto.img || undefined,
+  phoneNumber: dto.phone || undefined,
   addresses: [],
   orderHistory: [],
   wishlist: [],
@@ -51,4 +50,13 @@ export const authService = {
   // Cập nhật profile — PUT /api/auth/me
   updateProfile: (data: Partial<User>) =>
     api.put<User>('/auth/me', data),
+
+  // upload avatar
+  uploadAvatar: (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post<any>('/auth/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+  },
 };

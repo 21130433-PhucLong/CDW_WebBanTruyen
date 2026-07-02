@@ -16,6 +16,7 @@ const Home: React.FC = () => {
   const [popularAuthors, setPopularAuthors] = useState<Author[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [topManga, setTopManga] = useState<Manga[]>([])
 
   // Gọi API khi component mount
   useEffect(() => {
@@ -23,21 +24,23 @@ const Home: React.FC = () => {
       try {
         setIsLoading(true)
         // Gọi 4 API song song — nhanh hơn gọi tuần tự
-        const [featuredRes, newRes, categoriesRes, authorsRes] =
+        const [featuredRes, newRes, categoriesRes, authorsRes, topRes] =
           await Promise.all([
             mangaService.getFeatured(),
             mangaService.getNewReleases(),
             // Gọi trực tiếp api vì mangaService chưa có getCategories
             import('../services/api').then(m =>
               m.default.get<Category[]>('/categories')),
-            // Gọi trực tiếp api vì mangaService chưa có getPopularAuthors
-            import('../services/api').then(m =>
-              m.default.get<Author[]>('/authors/popular')),
+              // Gọi trực tiếp api vì mangaService chưa có getPopularAuthors
+              import('../services/api').then(m =>
+                m.default.get<Author[]>('/authors/popular')),
+            mangaService.getTopSelling(),
           ])
         setFeaturedManga(featuredRes.data)
         setNewReleases(newRes.data)
         setCategories(categoriesRes.data)
         setPopularAuthors(authorsRes.data)
+        setTopManga(topRes.data.slice(0,6))
       } catch (err) {
         console.error('Lỗi khi tải trang chủ:', err)
         setError('Không thể tải dữ liệu. Vui lòng thử lại.')
@@ -102,7 +105,7 @@ const Home: React.FC = () => {
       <section className="container mx-auto px-4">
         <h2 className="text-2xl font-bold mb-6">Manga nổi bật</h2>
         {featuredManga.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 p-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
             {featuredManga.map((manga) => (
               <MangaCard key={manga.id} manga={manga} />
             ))}
@@ -116,7 +119,7 @@ const Home: React.FC = () => {
       <section className="container mx-auto px-4">
         <h2 className="text-2xl font-bold mb-6">Mới phát hành</h2>
         {newReleases.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 p-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
             {newReleases.map((manga) => (
               <MangaCard key={manga.id} manga={manga} />
             ))}
@@ -125,6 +128,27 @@ const Home: React.FC = () => {
           <p className="text-gray-500">Chưa có manga mới.</p>
         )}
       </section>
+
+      {/* ── Top bán chạy ── */}
+      {topManga.length > 0 && (
+        <section className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              🔥 Top bán chạy
+            </h2>
+            <Link to="/search?sort=best-seller"
+              className="text-indigo-600 hover:text-indigo-800 font-medium
+                text-sm flex items-center gap-1">
+              Xem tất cả →
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {topManga.map((manga) => (
+              <MangaCard key={manga.id} manga={manga} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── Categories ── */}
       <section className="container mx-auto px-4">

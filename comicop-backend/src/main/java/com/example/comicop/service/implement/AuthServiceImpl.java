@@ -13,6 +13,9 @@ import com.example.comicop.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.Base64;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -81,5 +84,34 @@ public class AuthServiceImpl implements AuthService {
             throw new ResourceNotFoundException("Không tìm thấy user với email: " + email);
         }
         return AccountMapper.accountToAccountDto(account);
+    }
+
+    @Override
+    public AccountDto updateAvatar(String email, MultipartFile file) {
+        Account account = accountRepository.findByEmail(email);
+        if (account == null) {
+            throw new ResourceNotFoundException("Không tìm thấy account: " + email);
+        }
+
+        if (file.isEmpty()) {
+            throw new RuntimeException("Vui lòng chọn ảnh");
+        }
+
+        // Giới hạn 2MB tránh DB phình to
+        if (file.getSize() > 2 * 1024 * 1024) {
+            throw new RuntimeException("Ảnh không được vượt quá 2MB");
+        }
+
+        try {
+            // Convert ảnh sang base64 string lưu trực tiếp vào cột img
+            // Cách đơn giản cho đồ án — không cần setup AWS S3/Cloudinary
+            String base64Image = "data:" + file.getContentType() + ";base64,"
+                    + Base64.getEncoder().encodeToString(file.getBytes());
+            account.setImg(base64Image);
+            Account saved = accountRepository.save(account);
+            return AccountMapper.accountToAccountDto(saved);
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi xử lý ảnh: " + e.getMessage());
+        }
     }
 }

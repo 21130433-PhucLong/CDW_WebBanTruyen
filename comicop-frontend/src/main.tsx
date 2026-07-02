@@ -8,11 +8,9 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 
 // AuthProvider — quản lý trạng thái đăng nhập toàn app
-// Sẽ tạo file này đầy đủ ở Ngày 5
 import { AuthProvider } from './contexts/AuthContext.tsx'
 
 // CartProvider — quản lý giỏ hàng toàn app
-// Sẽ tạo file này đầy đủ ở Ngày 10
 import { CartProvider } from './contexts/CartContext'
 
 // Bootstrap CSS — dùng cho Thymeleaf templates và một số component

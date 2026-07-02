@@ -126,13 +126,6 @@ const Search: React.FC = () => {
                 tracking-wide">
                 Bộ lọc
               </h3>
-              <button
-                onClick={handleResetFilter}
-                className="text-xs text-indigo-600 hover:text-indigo-800
-                  font-medium underline"
-              >
-                Xoá tất cả
-              </button>
             </div>
 
             {/* ── Thể loại ── */}
@@ -258,14 +251,14 @@ const Search: React.FC = () => {
           {/* Header kết quả */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             {/* Chữ kết quả — đẹp hơn, nổi bật hơn */}
-            <div>
+            <div className = "flex items-center gap-3">
               {query ? (
                 <p className="text-gray-700">
-                  <span className="font-bold text-gray-900 uppercase
-                    tracking-wide text-sm">
+                  <span className="text-base font-bold text-gray-900 uppercase
+                    tracking-wide">
                     Kết quả tìm kiếm:{' '}
                   </span>
-                  <span className="text-red-600 font-semibold">
+                  <span className="text-blue-600 font-semibold">
                     {query}
                   </span>
                   <span className="text-gray-600 text-sm ml-2">
@@ -274,6 +267,16 @@ const Search: React.FC = () => {
                 </p>
               ) : (
                 <p className="text-gray-500">Nhập từ khoá để tìm kiếm</p>
+              )}
+              {(selectedCategories.length > 0 || selectedPreset !== null
+                || customMin || customMax) && (
+                <button
+                  onClick={handleResetFilter}
+                  className="text-xs text-red-600 hover:text-red-700
+                    font-medium underline underline-offset-2 px-9"
+                >
+                  Xoá tất cả
+                </button>
               )}
             </div>
 

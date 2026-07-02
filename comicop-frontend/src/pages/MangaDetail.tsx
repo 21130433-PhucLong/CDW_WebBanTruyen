@@ -26,8 +26,9 @@ const MangaDetail: React.FC = () => {
   const [addingToCart, setAddingToCart] = useState(false)
 
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('left')
   const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [lightboxImage, setLightboxImage] = useState('')
+  // const [lightboxImage, setLightboxImage] = useState('')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,6 +51,25 @@ const MangaDetail: React.FC = () => {
     }
     fetchData()
   }, [id])
+
+  const goToPrevImage = () => {
+    setSlideDirection('right') // Lùi về trước → trượt từ trái sang phải
+    // const allImages = [manga!.coverImage, ...(manga!.images || [])]
+    setSelectedIndex(prev => Math.max(0, prev - 1))
+  }
+
+  const goToNextImage = () => {
+    setSlideDirection('left') // Tiến tới sau → trượt từ phải sang trái
+    // const allImages = [manga!.coverImage, ...(manga!.images || [])]
+    const totalImages = 1 + (manga?.images?.length || 0)
+    setSelectedIndex(prev => Math.min(totalImages - 1, prev + 1))
+  }
+
+  // Khi click thumbnail trực tiếp — tự xác định hướng dựa vào vị trí cũ/mới
+  const goToImage = (newIndex: number) => {
+    setSlideDirection(newIndex > selectedIndex ? 'left' : 'right')
+    setSelectedIndex(newIndex)
+  }
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -110,16 +130,20 @@ const MangaDetail: React.FC = () => {
           {/* Tạo mảng tất cả ảnh: bìa chính + ảnh phụ */}
           {(() => {
             const allImages = [manga.coverImage, ...(manga.images || [])]
+            const isFirstImage = selectedIndex === 0
+            const isLastImage = selectedIndex === allImages.length - 1
+            
             return (
               <>
                 {/* Ảnh chính — click để mở lightbox xem to */}
                 <img
+                  key={selectedIndex}
                   src={allImages[selectedIndex] || manga.coverImage}
                   alt={manga.title}
                   className="w-full rounded-lg shadow-lg object-contain cursor-zoom-in"
                   style={{ maxHeight: '500px' }}
                   onClick={() => {
-                    setLightboxImage(allImages[selectedIndex] || manga.coverImage)
+                    // setLightboxImage(allImages[selectedIndex] || manga.coverImage)
                     setLightboxOpen(true)
                   }}
                   onError={(e) => {
@@ -127,6 +151,42 @@ const MangaDetail: React.FC = () => {
                       'https://via.placeholder.com/400x500?text=No+Image'
                   }}
                 />
+
+                {/* Nút ‹ — ẩn nếu đang ở ảnh đầu tiên */}
+                {allImages.length > 1 && !isFirstImage && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); goToPrevImage() }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2
+                      w-9 h-9 bg-white bg-opacity-80 hover:bg-opacity-100
+                      rounded-full flex items-center justify-center
+                      shadow-md text-gray-700 font-bold text-lg transition-all
+                      opacity-0 group-hover:opacity-100"
+                  >
+                    ‹
+                  </button>
+                )}
+
+                {/* Nút › — ẩn nếu đang ở ảnh cuối cùng */}
+                {allImages.length > 1 && !isLastImage && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); goToNextImage() }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2
+                      w-9 h-9 bg-white bg-opacity-80 hover:bg-opacity-100
+                      rounded-full flex items-center justify-center
+                      shadow-md text-gray-700 font-bold text-lg transition-all
+                      opacity-0 group-hover:opacity-100"
+                  >
+                    ›
+                  </button>
+                )}
+
+                {/* Số thứ tự ảnh — tiện theo dõi đang xem ảnh mấy/tổng mấy */}
+                {allImages.length > 1 && (
+                  <span className="absolute bottom-2 right-2 bg-black bg-opacity-50
+                    text-white text-xs px-2 py-1 rounded-full">
+                    {selectedIndex + 1} / {allImages.length}
+                  </span>
+                )}
 
                 {/* Thumbnail gallery — chỉ hiện nếu có từ 2 ảnh trở lên */}
                 {allImages.length > 1 && (
@@ -136,7 +196,7 @@ const MangaDetail: React.FC = () => {
                         key={idx}
                         src={img}
                         alt={`Ảnh ${idx + 1}`}
-                        onClick={() => setSelectedIndex(idx)}
+                        onClick={() => goToImage(idx)}
                         className={`w-20 h-24 object-cover rounded cursor-pointer
                           border-2 flex-shrink-0 transition-all
                           ${selectedIndex === idx
@@ -155,35 +215,6 @@ const MangaDetail: React.FC = () => {
             )
           })()}
         </div>
-
-        {/* Lightbox — xem ảnh to ở giữa màn hình, click ngoài để đóng */}
-        {lightboxOpen && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-80 z-50
-              flex items-center justify-center p-4"
-            onClick={() => setLightboxOpen(false)}
-          >
-            <div className="relative max-w-3xl max-h-full">
-              <img
-                src={lightboxImage}
-                alt="Xem ảnh lớn"
-                className="max-w-full max-h-screen object-contain rounded-lg shadow-2xl"
-                onClick={e => e.stopPropagation()}
-              />
-              <button
-                onClick={() => setLightboxOpen(false)}
-                className="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full
-                  flex items-center justify-center text-gray-800 font-bold text-xl
-                  shadow-lg hover:bg-gray-100"
-              >
-                ✕
-              </button>
-              <p className="text-white text-center text-sm mt-2 opacity-70">
-                Click ra ngoài hoặc ✕ để đóng
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* ── Phần thông tin ── */}
         <div className="space-y-6">
@@ -344,6 +375,22 @@ const MangaDetail: React.FC = () => {
             </button>
           </div>
 
+          {/* Chính sách đổi trả — tăng độ tin cậy cho sản phẩm */}
+          <div className="bg-gray-100 rounded-lg p-4 space-y-2 text-sm">
+            <div className="flex items-center gap-2 text-gray-700">
+              <span>🔄</span>
+              <span>Đổi trả miễn phí trong <strong>7 ngày</strong> nếu sản phẩm lỗi</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-700">
+              <span>🚚</span>
+              <span>Miễn phí ship đơn từ <strong>150.000đ</strong></span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-700">
+              <span>✅</span>
+              <span>Cam kết sách mới 100%, đóng gói cẩn thận</span>
+            </div>
+          </div>
+
           {/* Mô tả */}
           <div className="prose max-w-none">
             <h2 className="text-xl font-bold mb-2">Giới thiệu</h2>
@@ -387,6 +434,72 @@ const MangaDetail: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Lightbox — xem ảnh to ở giữa màn hình, click ngoài để đóng */}
+        {lightboxOpen && (() => {
+          const allImages = [manga.coverImage, ...(manga.images || [])]
+          const isFirstImage = selectedIndex === 0
+          const isLastImage = selectedIndex === allImages.length - 1
+
+          return (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-80 z-50
+                flex items-center justify-center p-4"
+              onClick={() => setLightboxOpen(false)}
+            >
+              <div className="relative max-w-3xl max-h-full">
+                <img
+                  key={selectedIndex}
+                  src={allImages[selectedIndex]}
+                  alt="Xem ảnh lớn"
+                  className={`max-w-full max-h-screen object-contain rounded-lg shadow-2xl
+                    ${slideDirection === 'left' ? 'animate-slide-left' : 'animate-slide-right'}`}
+                  onClick={e => e.stopPropagation()}
+                />
+
+                {/* Nút ‹ trong lightbox */}
+                {allImages.length > 1 && !isFirstImage && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); goToPrevImage() }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2
+                      w-10 h-10 bg-white bg-opacity-90 hover:bg-opacity-100
+                      rounded-full flex items-center justify-center
+                      shadow-lg text-gray-800 font-bold text-xl"
+                  >
+                    ‹
+                  </button>
+                )}
+
+                {/* Nút › trong lightbox */}
+                {allImages.length > 1 && !isLastImage && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); goToNextImage() }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2
+                      w-10 h-10 bg-white bg-opacity-90 hover:bg-opacity-100
+                      rounded-full flex items-center justify-center
+                      shadow-lg text-gray-800 font-bold text-xl"
+                  >
+                    ›
+                  </button>
+                )}
+
+                {/* Nút đóng */}
+                <button
+                  onClick={() => setLightboxOpen(false)}
+                  className="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full
+                    flex items-center justify-center text-gray-800 font-bold text-lg
+                    shadow-lg hover:bg-gray-100"
+                >
+                  ✕
+                </button>
+
+                <p className="text-white text-center text-sm mt-2 opacity-70">
+                  {selectedIndex + 1} / {allImages.length} — Click ra ngoài hoặc ✕ để đóng
+                </p>
+              </div>
+            </div>
+          )
+        })()}
 
       {/* Manga liên quan — thêm mới */}
       {relatedManga.length > 0 && (

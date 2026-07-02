@@ -14,44 +14,54 @@ import MangaNews from './pages/MangaNews'
 import Cart from './pages/Cart'
 import Checkout from './pages/checkout/Checkout'
 import OrderHistory from './pages/user/OrderHistory'
+import ScrollToTop from './components/common/ScrollToTop'
+import ProfileLayout from './components/Layout/ProfileLayout'
+import Profile from './pages/user/Profile'
 
 // Các trang còn lại vẫn là placeholder — sẽ thay dần từng ngày
-const Profile = () => <div style={{padding:'2rem'}}>👤 Hồ sơ </div>
 const Admin = () => <div style={{padding:'2rem'}}>⚙️ Admin</div>
 
 const App: React.FC = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        {/* Public routes — ai cũng vào được */}
-        <Route index element={<Home />} />
-        <Route path="manga" element={<Manga />} />
-        <Route path="manga/:id" element={<MangaDetail />} />
-        <Route path="search" element={<Search />} />
-        <Route path="author/:id" element={<AuthorDetail />} />
-        <Route path="news" element={<MangaNews />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+    <>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          {/* Public routes — ai cũng vào được */}
+          <Route index element={<Home />} />
+          <Route path="manga" element={<Manga />} />
+          <Route path="manga/:id" element={<MangaDetail />} />
+          <Route path="search" element={<Search />} />
+          <Route path="author/:id" element={<AuthorDetail />} />
+          <Route path="news" element={<MangaNews />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
 
-        {/* Private routes — cần đăng nhập */}
-        {/* PrivateRoute kiểm tra user, nếu chưa login → redirect /login */}
-        <Route path="cart" element={
-          <PrivateRoute><Cart /></PrivateRoute>
-        } />
-        <Route path="checkout" element={
-          <PrivateRoute><Checkout /></PrivateRoute>
-        } />
-        <Route path="profile" element={
-          <PrivateRoute><Profile /></PrivateRoute>
-        } />
-        <Route path="orders" element={
-          <PrivateRoute><OrderHistory /></PrivateRoute>
-        } />
-        <Route path="admin" element={
-          <PrivateRoute><Admin /></PrivateRoute>
-        } />
-      </Route>
-    </Routes>
+          {/* Private routes — cần đăng nhập */}
+          {/* PrivateRoute kiểm tra user, nếu chưa login → redirect /login */}
+          <Route path="cart" element={
+            <PrivateRoute><Cart /></PrivateRoute>
+          } />
+          <Route path="checkout" element={
+            <PrivateRoute><Checkout /></PrivateRoute>
+          } />
+         <Route path="profile" element={
+           <PrivateRoute><ProfileLayout /></PrivateRoute>
+         }>
+          <Route index element={<Profile />} />
+         </Route>
+         <Route path="orders" element={
+           <PrivateRoute><ProfileLayout /></PrivateRoute>
+         }>
+           <Route index element={<OrderHistory />} />
+         </Route>
+          <Route path="admin" element={
+            <PrivateRoute><Admin /></PrivateRoute>
+          } />
+        </Route>
+      </Routes>
+      
+      <ScrollToTop />
+    </>
   )
 }
 
