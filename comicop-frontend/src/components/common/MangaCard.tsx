@@ -6,6 +6,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { useCart } from '../../contexts/CartContext'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import { toast } from 'react-toastify'
 
 interface MangaCardProps {
   manga: Manga
@@ -33,6 +34,7 @@ const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
   const { user } = useAuth()
   const { addToCart } = useCart()
   const navigate = useNavigate()
+  const [addingQuick, setAddingQuick] = React.useState(false)
   return (
     <div className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-indigo-300
         shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-full">
@@ -103,21 +105,25 @@ const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
           onClick={async (e) => {
             e.preventDefault() // không navigate vào trang chi tiết
             if (!user) {
-              alert('Vui lòng đăng nhập để thêm vào giỏ hàng')
+              toast.info('Vui lòng đăng nhập để thêm vào giỏ hàng')
               navigate('/login')
               return
             }
             try {
+              setAddingQuick(true)
               await addToCart(manga.id, 1)
-              alert(`Đã thêm "${manga.title}" vào giỏ!`)
+              toast.success(`Đã thêm "${manga.title}" vào giỏ!`)
             } catch (err: any){
-              alert(err.response?.data?.message || 'Không thể thêm vào giỏ hàng')
+              toast.error(err.response?.data?.message || 'Không thể thêm vào giỏ hàng')
+            } finally{
+              setAddingQuick(false)
             }
           }}
+          disabled ={addingQuick}
           className="w-full py-2 bg-blue-600 text-white text-sm font-medium
            rounded-lg hover:bg-blue-800 active:bg-indigo-800 transition-colors"
         >
-          + Thêm vào giỏ
+          {addingQuick ? 'Đang thêm...' : '+ Thêm vào giỏ'}
         </button>
       </div>
 

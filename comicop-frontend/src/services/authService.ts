@@ -49,14 +49,17 @@ export const authService = {
 
   // Cập nhật profile — PUT /api/auth/me
   updateProfile: (data: Partial<User>) =>
-    api.put<User>('/auth/me', data),
+    api.put<User>('/auth/me', {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phone: data.phoneNumber
+    }),
 
   // upload avatar
   uploadAvatar: (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
-    return api.post<any>('/auth/avatar', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
+
+    return api.post<any>('/auth/avatar', formData); 
   },
 };

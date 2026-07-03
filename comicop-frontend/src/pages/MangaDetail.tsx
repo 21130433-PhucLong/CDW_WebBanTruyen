@@ -10,6 +10,7 @@ import { useAuth } from '../contexts/AuthContext'
 import type { Manga } from '../models/types'
 import MangaCard from '../components/common/MangaCard'
 import api from '../services/api'
+import { toast } from 'react-toastify'
 
 const MangaDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -79,9 +80,9 @@ const MangaDetail: React.FC = () => {
     try {
       setAddingToCart(true)
       await addToCart(Number(id), quantity)
-      alert('Đã thêm vào giỏ hàng!')
+      toast.success('Đã thêm vào giỏ hàng!')
     } catch (err) {
-      alert('Không thể thêm vào giỏ hàng.')
+      toast.error('Không thể thêm vào giỏ hàng.')
     } finally {
       setAddingToCart(false)
     }

@@ -18,4 +18,6 @@ public interface AuthService {
 
     // Method mới — cập nhật avatar
     AccountDto updateAvatar(String email, MultipartFile file);
+
+    AccountDto updateProfile(String email, AccountDto accountDto);
 }

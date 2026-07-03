@@ -19,6 +19,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 // CSS global của dự án
 import './index.css'
 
+// Thêm Toastify
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <BrowserRouter>
@@ -26,6 +30,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <AuthProvider>
                 <CartProvider>
                     <App />
+                    {/* Toast hiện góc trên phải, tự ẩn sau 3s */}
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop
+                        closeOnClick
+                        pauseOnHover
+                    />
                 </CartProvider>
             </AuthProvider>
         </BrowserRouter>

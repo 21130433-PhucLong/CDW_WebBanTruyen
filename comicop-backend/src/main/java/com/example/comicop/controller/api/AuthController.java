@@ -70,4 +70,13 @@ public class AuthController {
         AccountDto updated = authService.updateAvatar(email, file);
         return ResponseEntity.ok(updated);
     }
+
+    @PutMapping("/me")
+    public ResponseEntity<AccountDto> updateProfile(
+            @AuthenticationPrincipal String email,
+            @RequestBody AccountDto accountDto) {
+
+        AccountDto updated = authService.updateProfile(email, accountDto);
+        return ResponseEntity.ok(updated);
+    }
 }

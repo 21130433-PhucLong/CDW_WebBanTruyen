@@ -113,4 +113,28 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Lỗi xử lý ảnh: " + e.getMessage());
         }
     }
+
+    @Override
+    public AccountDto updateProfile(String email, AccountDto dto) {
+
+        Account account = accountRepository.findByEmail(email);
+
+        if (account == null) {
+            throw new ResourceNotFoundException("Không tìm thấy account");
+        }
+
+        // Cập nhật các thông tin được phép sửa
+        account.setFirstName(dto.getFirstName());
+        account.setLastName(dto.getLastName());
+        account.setPhone(dto.getPhone());
+        account.setGender(dto.getGender());
+
+        // Nếu cho phép sửa username thì bỏ comment
+        // account.setUserName(dto.getUserName());
+
+        Account saved = accountRepository.save(account);
+
+        return AccountMapper.accountToAccountDto(saved);
+    }
+
 }
