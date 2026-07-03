@@ -104,7 +104,6 @@ public class AuthServiceImpl implements AuthService {
 
         try {
             // Convert ảnh sang base64 string lưu trực tiếp vào cột img
-            // Cách đơn giản cho đồ án — không cần setup AWS S3/Cloudinary
             String base64Image = "data:" + file.getContentType() + ";base64,"
                     + Base64.getEncoder().encodeToString(file.getBytes());
             account.setImg(base64Image);

@@ -48,7 +48,7 @@ public class Account {
     private String gender;
 
     // Lưu đường dẫn ảnh đại diện
-    @Column(name = "avatar_img")
+    @Column(name = "avatar_img", columnDefinition = "TEXT")
     private String img;
 
     // Role: USER hoặc ADMIN
