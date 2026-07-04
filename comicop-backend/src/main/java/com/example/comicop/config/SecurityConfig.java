@@ -69,6 +69,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/me").authenticated()
                         // Admin only
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/addresses/**").authenticated()
                         .requestMatchers("/api/cart/**").authenticated()
                         .requestMatchers("/api/wishlist/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/manga/*/wishlist").authenticated()

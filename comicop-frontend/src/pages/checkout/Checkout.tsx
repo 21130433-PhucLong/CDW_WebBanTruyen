@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMoneyBill } from '@fortawesome/free-solid-svg-icons'
@@ -6,6 +6,9 @@ import { useCart } from '../../contexts/CartContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { orderService } from '../../services/orderService'
 import { voucherService } from '../../services/voucherService'
+import AddressSelector from '../../components/common/AddressSelector'
+import { addressService } from '../../services/addressService'
+import type { AddressDto } from '../../services/addressService'
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate()
@@ -37,11 +40,41 @@ const Checkout: React.FC = () => {
     phone?: string
     address?: string
   }>({})
+
+  // Địa chỉ đã lưu
+  const [savedAddresses, setSavedAddresses] = useState<AddressDto[]>([])
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null)
+  const [useNewAddress, setUseNewAddress] = useState(false)
+  const [street, setStreet] = useState('')
+  const [newAddrData, setNewAddrData] = useState<{
+    provinceCode: string
+    provinceName: string
+    wardCode: string
+    wardName: string
+  } | null>(null)
+
   // Tính tiền
   const subtotal = cart?.subtotal || 0
   const shippingFee = cart?.shippingFee || 0
   const discountAmount = Math.floor(subtotal * discountPercent / 100)
   const total = subtotal - discountAmount + shippingFee
+
+  useEffect(() => {
+    addressService.getAddresses()
+      .then(res => {
+        setSavedAddresses(res.data)
+
+        const def = res.data.find(a => a.isDefault)
+
+        if (def) {
+          setSelectedAddressId(def.addressId)
+          setFullName(def.fullName)
+          setPhone(def.phone)
+          setAddress(def.street)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const handleApplyVoucher = async () => {
     if (!voucherCode.trim()) return
@@ -213,25 +246,87 @@ const Checkout: React.FC = () => {
                 </div>
 
                 {/* Địa chỉ */}
+                {/* Địa chỉ giao hàng — chọn từ sổ hoặc nhập mới */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Địa chỉ giao hàng *
                   </label>
-                  <textarea
-                    rows={3}
-                    value={address}
-                    onChange={e => {
-                      setAddress(e.target.value)
-                      if (fieldErrors.address) {
-                        setFieldErrors(prev => ({ ...prev, address: undefined }))
-                      }
-                    }}
-                    placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
-                    className={`w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-1
-                      ${fieldErrors.address
-                        ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
-                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'}`}
-                  />
+
+                  {/* Danh sách địa chỉ đã lưu */}
+                  {savedAddresses.length > 0 && !useNewAddress && (
+                    <div className="space-y-2 mb-3">
+                      {savedAddresses.map(addr => (
+                        <label key={addr.addressId}
+                          className={`flex items-start gap-3 p-3 rounded-lg border-2
+                            cursor-pointer transition-colors
+                            ${selectedAddressId === addr.addressId
+                              ? 'border-indigo-500 bg-indigo-50'
+                              : 'border-gray-200 hover:border-gray-300'}`}>
+                          <input
+                            type="radio"
+                            name="savedAddress"
+                            value={addr.addressId}
+                            checked={selectedAddressId === addr.addressId}
+                            onChange={() => {
+                              setSelectedAddressId(addr.addressId)
+                              setFullName(addr.fullName)
+                              setPhone(addr.phone)
+                              setAddress(addr.fullAddress)
+                            }}
+                            className="mt-1"
+                          />
+                          <div>
+                            <p className="font-medium text-gray-800">
+                              {addr.fullName}
+                              {addr.isDefault && (
+                                <span className="ml-2 text-xs bg-indigo-600 text-white
+                                  px-1.5 py-0.5 rounded font-medium">
+                                  Mặc định
+                                </span>
+                              )}
+                            </p>
+                            <p className="text-sm text-gray-600">{addr.phone}</p>
+                            <p className="text-sm text-gray-500">{addr.fullAddress}</p>
+                          </div>
+                        </label>
+                      ))}
+                      <button type="button"
+                        onClick={() => { setUseNewAddress(true); setSelectedAddressId(null) }}
+                        className="text-sm text-indigo-600 hover:text-indigo-800 font-medium
+                          flex items-center gap-1 mt-1">
+                        + Dùng địa chỉ khác
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Nhập địa chỉ mới hoặc chưa có địa chỉ nào */}
+                  {(useNewAddress || savedAddresses.length === 0) && (
+                    <div className="space-y-3">
+                      <AddressSelector
+                        onSelect={(data) => {
+                          setNewAddrData(data)
+                          // Gộp thành chuỗi fullAddress để submit
+                          setAddress(`${street}, ${data.wardName}, ${data.provinceName}`)
+                        }}
+                      />
+                      <textarea
+                        rows={2}
+                        value={street}
+                        onChange={e => setStreet(e.target.value)}
+                        placeholder="Số nhà, tên đường"
+                        className="w-full rounded-md border border-gray-300 px-3 py-2
+                          focus:border-indigo-500 focus:outline-none focus:ring-1
+                          focus:ring-indigo-500"
+                      />
+                      {useNewAddress && (
+                        <button type="button"
+                          onClick={() => setUseNewAddress(false)}
+                          className="text-sm text-gray-500 hover:text-gray-700">
+                          ← Dùng địa chỉ đã lưu
+                        </button>
+                      )}
+                    </div>
+                  )}
                   {fieldErrors.address && (
                     <p className="text-red-600 text-sm mt-1">{fieldErrors.address}</p>
                   )}

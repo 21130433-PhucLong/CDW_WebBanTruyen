@@ -12,6 +12,7 @@ const ProfileLayout: React.FC = () => {
     { path: '/profile', label: 'Hồ sơ cá nhân', icon: '👤' },
     { path: '/orders', label: 'Đơn hàng của tôi', icon: '📦' },
     { path: '/wishlist', label: 'Yêu thích', icon: '❤️' },
+    { path: '/profile/address', label: 'Địa chỉ', icon: '📍' },
     { path: '/profile/change-password', label: 'Đổi mật khẩu', icon: '🔒' },
   ]
 
