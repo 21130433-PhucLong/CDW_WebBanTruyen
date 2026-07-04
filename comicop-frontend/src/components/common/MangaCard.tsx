@@ -12,22 +12,22 @@ interface MangaCardProps {
   manga: Manga
 }
 
-// Hàm trả về class CSS dựa vào trạng thái manga
-const getStatusStyle = (status: string) => {
-  switch (status) {
-    case 'ongoing':   return 'bg-green-100 text-green-800'
-    case 'completed': return 'bg-blue-100 text-blue-800'
-    default:          return 'bg-gray-100 text-gray-800'
+// Hàm xác định badge hiển thị — ưu tiên theo thứ tự quan trọng
+const getBadge = (manga: Manga) => {
+  // Hết hàng — ưu tiên cao nhất, quan trọng nhất với người mua
+  if (manga.stock !== undefined && manga.stock === 0) {
+    return { text: 'Hết hàng', className: 'bg-gray-100 text-gray-600' }
   }
-}
-
-// Hàm trả về nhãn tiếng Việt
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'ongoing':   return 'Đang tiến hành'
-    case 'completed': return 'Hoàn thành'
-    default:          return 'Tạm ngưng'
+  // Bán chạy — soldCount cao
+  if (manga.soldCount && manga.soldCount >= 400) {
+    return { text: 'Bán chạy', className: 'bg-orange-100 text-orange-700' }
   }
+  // Sản phẩm mới — tạo trong 30 ngày gần nhất
+  if (manga.isNew) {
+    return { text: 'Mới', className: 'bg-blue-100 text-blue-700' }
+  }
+  // Mặc định — còn hàng bình thường
+  return { text: 'Còn hàng', className: 'bg-green-100 text-green-700' }
 }
 
 const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
@@ -91,12 +91,15 @@ const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
           <span className="block text-red-500 font-medium">
             {manga.price?.toLocaleString('vi-VN')} ₫
           </span>
-          <span
-            className={`inline-block mt-1 text-sm px-2 py-1 rounded
-              ${getStatusStyle(manga.status)}`}
-          >
-            {getStatusLabel(manga.status)}
-          </span>
+          {(() => {
+            const badge = getBadge(manga)
+            return (
+              <span className={`inline-block mt-3 text-s font-medium px-2 py-1
+                rounded-full ${badge.className}`}>
+                {badge.text}
+              </span>
+            )
+          })()}
         </div>
       </div>
 

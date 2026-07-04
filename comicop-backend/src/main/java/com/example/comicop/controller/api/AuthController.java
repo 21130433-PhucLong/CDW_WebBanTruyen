@@ -4,7 +4,9 @@ import com.example.comicop.dto.AccountDto;
 import com.example.comicop.dto.AuthRequest;
 import com.example.comicop.dto.AuthResponse;
 import com.example.comicop.dto.RegisterRequest;
+import com.example.comicop.dto.ChangePasswordRequest;
 import com.example.comicop.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,14 +24,14 @@ public class AuthController {
 
     // POST /api/auth/register — đăng ký tài khoản mới
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authService.register(request);
         return ResponseEntity.ok(response);
     }
 
     // POST /api/auth/login — đăng nhập
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }
@@ -78,5 +80,13 @@ public class AuthController {
 
         AccountDto updated = authService.updateProfile(email, accountDto);
         return ResponseEntity.ok(updated);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @AuthenticationPrincipal String email,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        authService.changePassword(email, request);
+        return ResponseEntity.ok("Đổi mật khẩu thành công");
     }
 }

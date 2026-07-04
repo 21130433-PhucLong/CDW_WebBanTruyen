@@ -11,7 +11,8 @@ const ProfileLayout: React.FC = () => {
   const menuItems = [
     { path: '/profile', label: 'Hồ sơ cá nhân', icon: '👤' },
     { path: '/orders', label: 'Đơn hàng của tôi', icon: '📦' },
-    // Wishlist và đổi mật khẩu 
+    { path: '/wishlist', label: 'Yêu thích', icon: '❤️' },
+    { path: '/profile/change-password', label: 'Đổi mật khẩu', icon: '🔒' },
   ]
 
   return (

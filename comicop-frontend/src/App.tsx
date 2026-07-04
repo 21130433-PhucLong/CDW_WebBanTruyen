@@ -17,6 +17,8 @@ import OrderHistory from './pages/user/OrderHistory'
 import ScrollToTop from './components/common/ScrollToTop'
 import ProfileLayout from './components/Layout/ProfileLayout'
 import Profile from './pages/user/Profile'
+import ChangePassword from './pages/user/ChangePassword'
+import Wishlist from './pages/Wishlist'
 
 // Các trang còn lại vẫn là placeholder — sẽ thay dần từng ngày
 const Admin = () => <div style={{padding:'2rem'}}>⚙️ Admin</div>
@@ -44,11 +46,15 @@ const App: React.FC = () => {
           <Route path="checkout" element={
             <PrivateRoute><Checkout /></PrivateRoute>
           } />
+          <Route path="wishlist" element={
+            <PrivateRoute><Wishlist /></PrivateRoute>
+          } />
          <Route path="profile" element={
-           <PrivateRoute><ProfileLayout /></PrivateRoute>
-         }>
-          <Route index element={<Profile />} />
-         </Route>
+            <PrivateRoute><ProfileLayout /></PrivateRoute>
+          }>
+            <Route index element={<Profile />} />
+            <Route path="change-password" element={<ChangePassword />} />
+          </Route>
          <Route path="orders" element={
            <PrivateRoute><ProfileLayout /></PrivateRoute>
          }>

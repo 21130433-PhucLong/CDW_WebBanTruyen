@@ -42,7 +42,7 @@ export interface Manga {
   categories: Category[]
   status: 'ongoing' | 'completed' | 'hiatus'
   releaseYear: number
-  chapters: Chapter[]
+  isNew?: boolean;
   reviews: Review[]
   // Thêm mới — thông tin sách vật lý
   publisher?: string      // Nhà xuất bản

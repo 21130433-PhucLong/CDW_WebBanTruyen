@@ -31,6 +31,12 @@ const Checkout: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Thêm state lưu lỗi từng field
+  const [fieldErrors, setFieldErrors] = useState<{
+    fullName?: string
+    phone?: string
+    address?: string
+  }>({})
   // Tính tiền
   const subtotal = cart?.subtotal || 0
   const shippingFee = cart?.shippingFee || 0
@@ -61,11 +67,37 @@ const Checkout: React.FC = () => {
     }
   }
 
+  // Validate số điện thoại VN: bắt đầu bằng 0, đủ 10 số
+  const validatePhone = (value: string): string | undefined => {
+    if (!value.trim()) return 'Vui lòng không bỏ trống'
+    const phoneRegex = /^0\d{9}$/
+    if (!phoneRegex.test(value.trim())) {
+      return 'Số điện thoại không hợp lệ (phải đủ 10 số, bắt đầu bằng 0)'
+    }
+    return undefined
+  }
+
+  // Validate field bắt buộc đơn giản
+  const validateRequired = (value: string): string | undefined => {
+    if (!value.trim()) return 'Vui lòng không bỏ trống'
+    return undefined
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!fullName.trim() || !phone.trim() || !address.trim()) {
-      setError('Vui lòng điền đầy đủ thông tin giao hàng')
+    // Validate từng field, gom lỗi vào object
+    const errors: typeof fieldErrors = {
+      fullName: validateRequired(fullName),
+      phone: validatePhone(phone),
+      address: validateRequired(address),
+    }
+    setFieldErrors(errors)
+
+    // Nếu có bất kỳ lỗi nào thì dừng lại, không submit
+    const hasError = Object.values(errors).some(msg => msg !== undefined)
+    if (hasError) {
+      setError('Vui lòng kiểm tra lại thông tin giao hàng')
       return
     }
 
@@ -126,38 +158,83 @@ const Checkout: React.FC = () => {
             <div>
               <h2 className="text-xl font-bold mb-4">Thông tin giao hàng</h2>
               <div className="space-y-4">
+                {/* Họ và tên */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Họ và tên *
                   </label>
-                  <input type="text" required value={fullName}
-                    onChange={e => setFullName(e.target.value)}
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={e => {
+                      setFullName(e.target.value)
+                      // Xoá lỗi khi người dùng bắt đầu gõ lại
+                      if (fieldErrors.fullName) {
+                        setFieldErrors(prev => ({ ...prev, fullName: undefined }))
+                      }
+                    }}
                     placeholder="Nguyễn Văn A"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2
-                      focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className={`w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-1
+                      ${fieldErrors.fullName
+                        ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'}`}
                   />
+                  {fieldErrors.fullName && (
+                    <p className="text-red-600 text-sm mt-1">{fieldErrors.fullName}</p>
+                  )}
                 </div>
+
+                {/* Số điện thoại */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Số điện thoại *
                   </label>
-                  <input type="tel" required value={phone}
-                    onChange={e => setPhone(e.target.value)}
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={e => {
+                      // Chỉ cho nhập số
+                      const val = e.target.value.replace(/\D/g, '')
+                      setPhone(val)
+                      if (fieldErrors.phone) {
+                        setFieldErrors(prev => ({ ...prev, phone: undefined }))
+                      }
+                    }}
+                    maxLength={10}
                     placeholder="0912345678"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2
-                      focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className={`w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-1
+                      ${fieldErrors.phone
+                        ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'}`}
                   />
+                  {fieldErrors.phone && (
+                    <p className="text-red-600 text-sm mt-1">{fieldErrors.phone}</p>
+                  )}
                 </div>
+
+                {/* Địa chỉ */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Địa chỉ giao hàng *
                   </label>
-                  <textarea required rows={3} value={address}
-                    onChange={e => setAddress(e.target.value)}
+                  <textarea
+                    rows={3}
+                    value={address}
+                    onChange={e => {
+                      setAddress(e.target.value)
+                      if (fieldErrors.address) {
+                        setFieldErrors(prev => ({ ...prev, address: undefined }))
+                      }
+                    }}
                     placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2
-                      focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className={`w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-1
+                      ${fieldErrors.address
+                        ? 'border-red-400 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'}`}
                   />
+                  {fieldErrors.address && (
+                    <p className="text-red-600 text-sm mt-1">{fieldErrors.address}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -197,7 +274,7 @@ const Checkout: React.FC = () => {
 
           {/* Cột phải */}
           <div>
-            <h2 className="text-xl font-bold mb-4">Tóm tắt đơn hàng</h2>
+            <h2 className="text-xl text-blue-600 font-bold mb-4">Tóm tắt đơn hàng</h2>
 
             {/* Danh sách sản phẩm */}
             <div className="space-y-3 mb-6">
@@ -226,7 +303,7 @@ const Checkout: React.FC = () => {
 
             {/* Voucher */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-base font-bold text-indigo-700 mb-2">
                 Mã giảm giá
               </label>
               <div className="flex gap-2">
@@ -238,8 +315,8 @@ const Checkout: React.FC = () => {
                 />
                 <button type="button" onClick={handleApplyVoucher}
                   disabled={validatingVoucher || !voucherCode.trim()}
-                  className="px-4 py-2 bg-gray-100 border border-gray-300 rounded-md
-                    hover:bg-gray-200 disabled:opacity-50 text-sm font-medium">
+                  className="px-5 py-2 bg-indigo-600 text-white rounded-md font-semibold
+                  hover:bg-indigo-700 disabled:opacity-50 disabled:bg-gray-300 transition-colors">
                   {validatingVoucher ? '...' : 'Áp dụng'}
                 </button>
               </div>
@@ -254,25 +331,25 @@ const Checkout: React.FC = () => {
             <div className="bg-gray-50 rounded-lg p-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Tạm tính</span>
-                <span>{subtotal.toLocaleString('vi-VN')} ₫</span>
+                <span className='font-medium'>{subtotal.toLocaleString('vi-VN')} ₫</span>
               </div>
               {discountPercent > 0 && (
-                <div className="flex justify-between text-sm text-green-600">
+                <div className="flex justify-between text-sm text-green-600 font-medium">
                   <span>Giảm giá ({discountPercent}%)</span>
                   <span>- {discountAmount.toLocaleString('vi-VN')} ₫</span>
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Phí vận chuyển</span>
+                <span className="text-gray-700">Phí vận chuyển</span>
                 {shippingFee === 0 ? (
-                  <span className="text-green-600 font-medium">Miễn phí</span>
+                  <span className="text-green-600 font-bold">Miễn phí</span>
                 ) : (
                   <span>{shippingFee.toLocaleString('vi-VN')} ₫</span>
                 )}
               </div>
-              <div className="border-t pt-2 flex justify-between font-bold text-lg">
-                <span>Tổng cộng</span>
-                <span className="text-red-500">
+              <div className="border-t-2 border-blue-700 pt-3 flex justify-between items-center">
+                <span className="font-bold">Tổng cộng</span>
+                <span className="font-bold text-2xl text-red-500">
                   {total.toLocaleString('vi-VN')} ₫
                 </span>
               </div>

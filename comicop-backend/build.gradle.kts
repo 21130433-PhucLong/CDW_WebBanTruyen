@@ -63,6 +63,8 @@ dependencies {
 	// Spring Security — bảo vệ API endpoint
 	implementation("org.springframework.boot:spring-boot-starter-security")
 
+	implementation ("org.springframework.boot:spring-boot-starter-validation")
+
 	// JWT — tạo và xác thực token đăng nhập
 	implementation("io.jsonwebtoken:jjwt-api:0.12.3")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")

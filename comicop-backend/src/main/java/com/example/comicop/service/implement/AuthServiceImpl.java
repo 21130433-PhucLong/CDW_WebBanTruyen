@@ -5,6 +5,7 @@ import com.example.comicop.dto.AccountDto;
 import com.example.comicop.dto.AuthRequest;
 import com.example.comicop.dto.AuthResponse;
 import com.example.comicop.dto.RegisterRequest;
+import com.example.comicop.dto.ChangePasswordRequest;
 import com.example.comicop.entity.Account;
 import com.example.comicop.exception.ResourceNotFoundException;
 import com.example.comicop.mapper.AccountMapper;
@@ -55,15 +56,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(AuthRequest request) {
-        // Tìm account theo email
+        // Tìm account theo email, gộp chung thông báo không cho biết email có tồn tại hay không
         Account account = accountRepository.findByEmail(request.getEmail());
-        if (account == null) {
-            throw new RuntimeException("Email không tồn tại");
-        }
-        // Kiểm tra password bằng BCrypt
-        // passwordEncoder.matches() so sánh password thô với hash đã lưu
-        if (!passwordEncoder.matches(request.getPassword(), account.getPassword())) {
-            throw new RuntimeException("Mật khẩu không đúng");
+
+        if (account == null || !passwordEncoder.matches(request.getPassword(), account.getPassword())) {
+            throw new RuntimeException("Email hoặc mật khẩu không tồn tại");
         }
 
         // Kiểm tra tài khoản có bị khoá không
@@ -135,6 +132,28 @@ public class AuthServiceImpl implements AuthService {
         Account saved = accountRepository.save(account);
 
         return AccountMapper.accountToAccountDto(saved);
+    }
+
+    @Override
+    public void changePassword(String email, ChangePasswordRequest request) {
+        Account account = accountRepository.findByEmail(email);
+        if (account == null) {
+            throw new ResourceNotFoundException("Không tìm thấy account: " + email);
+        }
+
+        // Kiểm tra mật khẩu hiện tại đúng không — bắt buộc để tránh ai đó
+        // chiếm được phiên đăng nhập (token) đổi mật khẩu mà không biết mật khẩu cũ
+        if (!passwordEncoder.matches(request.getCurrentPassword(), account.getPassword())) {
+            throw new RuntimeException("Mật khẩu hiện tại không đúng");
+        }
+
+        // Không cho đổi mật khẩu mới giống hệt mật khẩu cũ
+        if (passwordEncoder.matches(request.getNewPassword(), account.getPassword())) {
+            throw new RuntimeException("Mật khẩu mới phải khác mật khẩu hiện tại");
+        }
+
+        account.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        accountRepository.save(account);
     }
 
 }
