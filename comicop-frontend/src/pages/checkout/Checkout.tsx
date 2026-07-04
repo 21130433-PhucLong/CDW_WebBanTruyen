@@ -46,7 +46,7 @@ const Checkout: React.FC = () => {
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null)
   const [useNewAddress, setUseNewAddress] = useState(false)
   const [street, setStreet] = useState('')
-  const [newAddrData, setNewAddrData] = useState<{
+  const [, setNewAddrData] = useState<{
     provinceCode: string
     provinceName: string
     wardCode: string

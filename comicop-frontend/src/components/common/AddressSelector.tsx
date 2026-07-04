@@ -29,7 +29,7 @@ const AddressSelector: React.FC<AddressSelectorProps> = ({
   const [provinces, setProvinces] = useState<Province[]>([])
   const [communes, setCommunes] = useState<Commune[]>([])
   const [selectedProvince, setSelectedProvince] = useState<Province | null>(null)
-  const [selectedCommune, setSelectedCommune] = useState<Commune | null>(null)
+  const [, setSelectedCommune] = useState<Commune | null>(null)
   const [loadingProvinces, setLoadingProvinces] = useState(true)
   const [loadingCommunes, setLoadingCommunes] = useState(false)
 
