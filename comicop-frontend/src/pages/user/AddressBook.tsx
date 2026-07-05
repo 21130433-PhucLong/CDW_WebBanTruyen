@@ -86,7 +86,7 @@ const AddressBook: React.FC = () => {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Sổ địa chỉ</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Địa chỉ</h1>
         <button
           onClick={() => setShowForm(!showForm)}
           className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm
@@ -142,20 +142,33 @@ const AddressBook: React.FC = () => {
             />
           </div>
 
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={isDefault}
-              onChange={e => setIsDefault(e.target.checked)}
-              className="w-4 h-4 text-indigo-600 rounded"
-            />
-            <span className="text-sm text-gray-700">Đặt làm địa chỉ mặc định</span>
-          </label>
+          <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center">
+              <input
+                id="default-address"
+                type="checkbox"
+                checked={isDefault}
+                onChange={e => setIsDefault(e.target.checked)}
+                className="w-4 h-4 accent-indigo-600 cursor-pointer"
+              />
 
-          <button type="submit" disabled={isSaving}
-            className="bg-indigo-600 text-white px-6 py-2 rounded-md
-              font-medium hover:bg-indigo-700 disabled:opacity-50
-              transition-colors">
-            {isSaving ? 'Đang lưu...' : 'Lưu địa chỉ'}
-          </button>
+              <label
+                htmlFor="default-address"
+                className="ml-2 text-sm text-gray-700 cursor-pointer leading-none"
+              >
+                Đặt làm địa chỉ mặc định
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="bg-indigo-600 text-white px-6 py-2 rounded-md
+                font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+            >
+              {isSaving ? 'Đang lưu...' : 'Lưu địa chỉ'}
+            </button>
+          </div>
         </form>
       )}
 

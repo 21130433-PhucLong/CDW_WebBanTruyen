@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 
 interface Province {
-  id: string
+  code: number
   name: string
 }
 
 interface Commune {
-  id: string
+  code: number
   name: string
 }
 
@@ -37,8 +37,10 @@ const AddressSelector: React.FC<AddressSelectorProps> = ({
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
-        const res = await fetch('https://addresskit.cas.so/latest/provinces')
+        const res = await fetch('https://provinces.open-api.vn/api/v2/p/')
+        console.log(res.status)
         const data = await res.json()
+        console.log(data)
         setProvinces(data)
       } catch {
         console.error('Không thể tải danh sách tỉnh thành')
@@ -54,7 +56,7 @@ const AddressSelector: React.FC<AddressSelectorProps> = ({
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const provinceId = e.target.value
-    const province = provinces.find(p => p.id === provinceId) || null
+    const province = provinces.find(p => p.code === Number(provinceId)) || null
     setSelectedProvince(province)
     setSelectedCommune(null)
     setCommunes([])
@@ -64,7 +66,7 @@ const AddressSelector: React.FC<AddressSelectorProps> = ({
     try {
       setLoadingCommunes(true)
       const res = await fetch(
-        `https://addresskit.cas.so/latest/provinces/${provinceId}/communes`
+        `https://provinces.open-api.vn/api/v2/w/?province=${provinceId}`
       )
       const data = await res.json()
       setCommunes(data)
@@ -78,14 +80,14 @@ const AddressSelector: React.FC<AddressSelectorProps> = ({
   // Khi chọn phường/xã → gọi callback để Checkout/AddressBook nhận giá trị
   const handleCommuneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const communeId = e.target.value
-    const commune = communes.find(c => c.id === communeId) || null
+    const commune = communes.find(c => c.code === Number(communeId)) || null
     setSelectedCommune(commune)
 
     if (commune && selectedProvince) {
       onSelect({
-        provinceCode: selectedProvince.id,
+        provinceCode: String(selectedProvince.code),
         provinceName: selectedProvince.name,
-        wardCode: commune.id,
+        wardCode: String(commune.code),
         wardName: commune.name,
       })
     }
@@ -110,7 +112,7 @@ const AddressSelector: React.FC<AddressSelectorProps> = ({
             {loadingProvinces ? 'Đang tải...' : 'Chọn tỉnh/thành'}
           </option>
           {provinces.map(p => (
-            <option key={p.id} value={p.id}>{p.name}</option>
+            <option key={p.code} value={p.code}>{p.name}</option>
           ))}
         </select>
       </div>
@@ -133,7 +135,7 @@ const AddressSelector: React.FC<AddressSelectorProps> = ({
             {loadingCommunes ? 'Đang tải...' : 'Chọn phường/xã'}
           </option>
           {communes.map(c => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+            <option key={c.code} value={c.code}>{c.name}</option>
           ))}
         </select>
       </div>
