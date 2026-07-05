@@ -17,8 +17,8 @@ public class Review {
     private Long reviewId;
 
     // Nội dung đánh giá
-    @Column(name = "content", columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "comment", columnDefinition = "TEXT")
+    private String comment;
 
     // Số sao: 1-5
     @Column(name = "rating")

@@ -11,6 +11,9 @@ import type { Manga } from '../models/types'
 import MangaCard from '../components/common/MangaCard'
 import api from '../services/api'
 import { toast } from 'react-toastify'
+import RatingInput from '../components/common/RatingInput'
+import { reviewService } from '../services/reviewService'
+import type { ReviewDto } from '../services/reviewService'
 
 const MangaDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -31,19 +34,34 @@ const MangaDetail: React.FC = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   // const [lightboxImage, setLightboxImage] = useState('')
 
+  // Review state
+  const [reviews, setReviews] = useState<ReviewDto[]>([])
+  const [newRating, setNewRating] = useState(0)
+  const [newComment, setNewComment] = useState('')
+  const [submittingReview, setSubmittingReview] = useState(false)
+  const [hasReviewed, setHasReviewed] = useState(false)
+
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return
       try {
         setIsLoading(true)
         // Gọi song song: chi tiết manga + manga liên quan
-        const [mangaRes, relatedRes] = await Promise.all([
+        const [mangaRes, relatedRes, reviewsRes] = await Promise.all([
           mangaService.getById(Number(id)),
           mangaService.getRelated(Number(id)),
+          reviewService.getReviews(Number(id)),
         ])
         setManga(mangaRes.data)
         setSelectedIndex(0)
         setRelatedManga(relatedRes.data)
+        setReviews(reviewsRes.data)
+        // Check user hiện tại đã review chưa — dựa theo userName khớp
+        if (user) {
+          setHasReviewed(
+            reviewsRes.data.some(r => r.userName === user.username)
+          )
+        }
       } catch (err) {
         setError('Không thể tải thông tin manga.')
       } finally {
@@ -51,7 +69,7 @@ const MangaDetail: React.FC = () => {
       }
     }
     fetchData()
-  }, [id])
+  }, [id, user])
 
   const goToPrevImage = () => {
     setSlideDirection('right') // Lùi về trước → trượt từ trái sang phải
@@ -102,6 +120,38 @@ const MangaDetail: React.FC = () => {
       setIsWishlisted(!isWishlisted)
     } catch (err) {
       console.error('Lỗi wishlist:', err)
+    }
+  }
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    if (newRating === 0) {
+      toast.error('Vui lòng chọn số sao')
+      return
+    }
+    if (!newComment.trim()) {
+      toast.error('Vui lòng nhập nội dung đánh giá')
+      return
+    }
+
+    try {
+      setSubmittingReview(true)
+      const res = await reviewService.createReview(
+        Number(id), newRating, newComment.trim()
+      )
+      setReviews(prev => [res.data, ...prev])
+      setHasReviewed(true)
+      setNewRating(0)
+      setNewComment('')
+      toast.success('Đã gửi đánh giá!')
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Không thể gửi đánh giá')
+    } finally {
+      setSubmittingReview(false)
     }
   }
 
@@ -399,40 +449,87 @@ const MangaDetail: React.FC = () => {
           </div>
 
           {/* Reviews */}
-          {manga.reviews && manga.reviews.length > 0 && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Đánh giá</h2>
+          {/* Khu vực đánh giá — form thêm mới + danh sách */}
+          <div className="border-t border-gray-200 pt-6">
+            <h2 className="text-xl font-bold mb-4">
+              Đánh giá ({reviews.length})
+            </h2>
+
+            {/* Form viết đánh giá */}
+            {!user ? (
+              <button
+                onClick={() => navigate('/login')}
+                className="text-indigo-600 hover:text-indigo-800 font-medium
+                  text-sm border border-indigo-300 px-4 py-2 rounded-md
+                  hover:bg-indigo-50 transition-colors mb-6"
+              >
+                Đăng nhập để đánh giá
+              </button>
+            ) : hasReviewed ? (
+              <p className="text-sm text-gray-500 mb-6">
+                ✓ Bạn đã đánh giá sản phẩm này
+              </p>
+            ) : (
+              <form onSubmit={handleSubmitReview}
+                className="bg-gray-50 rounded-lg p-4 mb-6 space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Chọn số sao
+                  </label>
+                  <RatingInput value={newRating} onChange={setNewRating} />
+                </div>
+                <div>
+                  <textarea
+                    rows={3}
+                    value={newComment}
+                    onChange={e => setNewComment(e.target.value)}
+                    placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."
+                    className="w-full rounded-md border border-gray-300 px-3 py-2
+                      focus:border-indigo-500 focus:outline-none focus:ring-1
+                      focus:ring-indigo-500"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={submittingReview}
+                  className="bg-indigo-600 text-white px-5 py-2 rounded-md
+                    font-medium hover:bg-indigo-700 disabled:opacity-50
+                    transition-colors text-sm"
+                >
+                  {submittingReview ? 'Đang gửi...' : 'Gửi đánh giá'}
+                </button>
+              </form>
+            )}
+
+            {/* Danh sách đánh giá */}
+            {reviews.length === 0 ? (
+              <p className="text-gray-400 text-sm">Chưa có đánh giá nào</p>
+            ) : (
               <div className="space-y-4">
-                {manga.reviews.map(review => (
-                  <div
-                    key={review.id}
-                    className="p-4 border border-gray-200 rounded-md"
-                  >
+                {reviews.map(review => (
+                  <div key={review.reviewId}
+                    className="p-4 border border-gray-200 rounded-md">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="font-medium">{review.userName}</p>
+                      <p className="font-medium text-gray-800">{review.userName}</p>
                       <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <FontAwesomeIcon
-                            key={i}
-                            icon={faStar}
-                            className={`h-4 w-4 ${
-                              i < review.rating
-                                ? 'text-yellow-400'
-                                : 'text-gray-300'
-                            }`}
-                          />
+                        {[1, 2, 3, 4, 5].map(i => (
+                          <span key={i} className={
+                            i <= review.rating ? 'text-yellow-400' : 'text-gray-300'
+                          }>★</span>
                         ))}
                       </div>
                     </div>
-                    <p className="text-gray-600">{review.comment}</p>
-                    <p className="text-sm text-gray-500 mt-2">
-                      {new Date(review.date).toLocaleDateString('vi-VN')}
+                    <p className="text-gray-600 text-sm">{review.comment}</p>
+                    <p className="text-xs text-gray-400 mt-2">
+                      {review.createdAt
+                        ? new Date(review.createdAt).toLocaleDateString('vi-VN')
+                        : ''}
                     </p>
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 

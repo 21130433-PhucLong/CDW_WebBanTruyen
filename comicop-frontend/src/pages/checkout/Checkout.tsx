@@ -345,7 +345,7 @@ const Checkout: React.FC = () => {
               </div>
             </div>
 
-            {/* Phương thức thanh toán — y chang zip layout */}
+            {/* Phương thức thanh toán */}
             <div>
               <h2 className="text-xl font-bold mb-4">Phương thức thanh toán</h2>
               <div className="border-2 border-indigo-500 bg-indigo-50 rounded-lg p-4">
