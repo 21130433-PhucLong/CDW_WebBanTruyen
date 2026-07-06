@@ -59,7 +59,7 @@ export const authService = {
   uploadAvatar: (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
-
+    console.log(formData.get("file"));
     return api.post<any>('/auth/avatar', formData); 
   },
 };
