@@ -67,7 +67,7 @@ const Footer: React.FC = () => {
                         <div>
                             <h3 className="text-lg font-semibold mb-4">Liên hệ</h3>
                             <ul className="space-y-2 text-gray-400">
-                                <li>Email: contact@comicop.com</li>
+                                <li>Email: comicop@gmail.com</li>
                                 <li>Điện thoại: (84) 123-456-789</li>
                                 <li>Địa chỉ: 123 Đường ABC, Quận XYZ, TP.HCM</li>
                             </ul>

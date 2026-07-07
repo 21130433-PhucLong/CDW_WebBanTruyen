@@ -11,6 +11,7 @@ interface CartContextType {
   updateQuantity: (itemId: number, quantity: number) => Promise<void>;
   removeFromCart: (itemId: number) => Promise<void>;
   clearCart: () => Promise<void>;
+  fetchCart: () => Promise<void>;
   calculateShipping: (address: CheckoutDetails['shippingAddress']) => Promise<number>;
   checkout: (checkoutDetails: CheckoutDetails) => Promise<void>;
 }
@@ -84,6 +85,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
   }, [cart, user]);
+
+  const fetchCart = async () => {
+    if (!user) return
+    try {
+      const res = await cartService.getCart()
+      setCart(res.data)
+    } catch {
+      setCart(null)
+    }
+  }
 
   // Tính lại subtotal, shippingFee, total
   const recalculate = (items: CartDto['items']): CartDto => {
@@ -239,6 +250,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         clearCart,
         calculateShipping,
         checkout,
+        fetchCart,
       }}
     >
       {children}

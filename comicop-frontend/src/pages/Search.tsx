@@ -37,21 +37,27 @@ const Search: React.FC = () => {
 
   // Gọi API tìm kiếm khi query/sort thay đổi
   useEffect(() => {
-    if (!query) return
-    const fetchResults = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true)
-        const res = await api.get(
-          `/manga/search?q=${encodeURIComponent(query)}&page=0&size=50`
-        )
-        setResults(res.data.content || res.data || [])
+        if (query) {
+          // Có query → tìm kiếm
+          const res = await api.get(
+            `/manga/search?q=${encodeURIComponent(query)}&page=0&size=50`
+          )
+          setResults(res.data.content || res.data || [])
+        } else {
+          // Không có query → lấy tất cả (dùng khi vào từ "Xem tất cả")
+          const res = await api.get('/manga?page=0&size=50')
+          setResults(res.data.content || res.data || [])
+        }
       } catch {
         setResults([])
       } finally {
         setIsLoading(false)
       }
     }
-    fetchResults()
+    fetchData()
   }, [query])
 
   // Tính khoảng giá hiện tại
@@ -253,30 +259,21 @@ const Search: React.FC = () => {
             {/* Chữ kết quả — đẹp hơn, nổi bật hơn */}
             <div className = "flex items-center gap-3">
               {query ? (
-                <p className="text-gray-700">
-                  <span className="text-base font-bold text-gray-900 uppercase
-                    tracking-wide">
-                    Kết quả tìm kiếm:{' '}
-                  </span>
-                  <span className="text-blue-600 font-semibold">
-                    {query}
-                  </span>
-                  <span className="text-gray-600 text-sm ml-2">
+                <p className="text-base font-bold text-gray-800 uppercase tracking-widest">
+                  Kết quả tìm kiếm:{' '}
+                  <span className="text-blue-600 font-semibold">{query}</span>
+                  <span className="text-gray-500 text-sm font-normal ml-2">
                     ({filtered.length} kết quả)
                   </span>
                 </p>
               ) : (
-                <p className="text-gray-500">Nhập từ khoá để tìm kiếm</p>
-              )}
-              {(selectedCategories.length > 0 || selectedPreset !== null
-                || customMin || customMax) && (
-                <button
-                  onClick={handleResetFilter}
-                  className="text-xs text-red-600 hover:text-red-700
-                    font-medium underline underline-offset-2 px-9"
-                >
-                  Xoá tất cả
-                </button>
+                // Không có query → đang xem theo bộ lọc/sắp xếp
+                <p className="text-base font-bold text-gray-800 uppercase tracking-wide">
+                  Tất cả sản phẩm
+                  <span className="text-blue-700 text-sm font-normal ml-2">
+                    ({filtered.length} sản phẩm)
+                  </span>
+                </p>
               )}
             </div>
 
@@ -300,7 +297,8 @@ const Search: React.FC = () => {
           {/* Tags filter đang chọn */}
           {(selectedCategories.length > 0 || selectedPreset !== null
             || customMin || customMax) && (
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              {/* Tags thể loại */}
               {selectedCategories.map(id => {
                 const cat = categories.find(c => c.id === id)
                 return cat ? (
@@ -308,27 +306,34 @@ const Search: React.FC = () => {
                     className="inline-flex items-center gap-1 px-3 py-1
                       bg-indigo-100 text-indigo-700 rounded-full text-sm">
                     {cat.name}
-                    <button
-                      onClick={() => handleCategoryChange(id)}
-                      className="ml-1 hover:text-indigo-900 font-bold"
-                    >
+                    <button onClick={() => handleCategoryChange(id)}
+                      className="hover:text-indigo-900 font-bold ml-1">
                       ×
                     </button>
                   </span>
                 ) : null
               })}
+
+              {/* Tag preset giá */}
               {selectedPreset !== null && (
                 <span className="inline-flex items-center gap-1 px-3 py-1
                   bg-indigo-100 text-indigo-700 rounded-full text-sm">
                   {PRICE_PRESETS[selectedPreset].label}
-                  <button
-                    onClick={() => setSelectedPreset(null)}
-                    className="ml-1 hover:text-indigo-900 font-bold"
-                  >
+                  <button onClick={() => setSelectedPreset(null)}
+                    className="hover:text-indigo-900 font-bold ml-1">
                     ×
                   </button>
                 </span>
               )}
+
+              {/* Nút Xoá tất cả — CÙNG HÀNG với tags */}
+              <button
+                onClick={handleResetFilter}
+                className="text-xs text-red-600 hover:text-red-800
+                  font-medium underline underline-offset-2 ml-1"
+              >
+                Xoá tất cả
+              </button>
             </div>
           )}
 

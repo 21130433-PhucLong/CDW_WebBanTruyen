@@ -5,6 +5,7 @@ import { faEye } from '@fortawesome/free-solid-svg-icons'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import { orderService } from '../../services/orderService'
 import type { Order } from '../../models/Cart'
+import { toast } from 'react-toastify'
 
 const OrderHistory: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([])
@@ -15,41 +16,50 @@ const OrderHistory: React.FC = () => {
   // Nhận thông báo đặt hàng thành công từ Checkout
   const successMessage = location.state?.message
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await orderService.getOrders()
-        setOrders(res.data)
-      } catch (err) {
-        console.error('Lỗi lấy đơn hàng:', err)
-      } finally {
-        setIsLoading(false)
-      }
+  const fetchOrders = async () => {
+    try {
+      const res = await orderService.getOrders()
+      setOrders(res.data)
+    } catch (err) {
+      console.error('Lỗi lấy đơn hàng:', err)
+    } finally {
+      setIsLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchOrders()
   }, [])
 
   // Map status từ backend → tiếng Việt
-  const getStatusText = (status: string) => {
+  const getStatusInfo = (status: string) => {
     switch (status?.toUpperCase()) {
-      case 'PENDING':    return 'Chờ xử lý'
-      case 'PROCESSING': return 'Đang xử lý'
-      case 'SHIPPED':    return 'Đang giao'
-      case 'DELIVERED':  return 'Đã giao'
-      case 'CANCELLED':  return 'Đã huỷ'
-      default:           return status
+      case 'PENDING':
+        return { label: 'Chờ xử lý', className: 'bg-yellow-100 text-yellow-800' }
+      case 'PROCESSING':
+        return { label: 'Đang xử lý', className: 'bg-blue-100 text-blue-800' }
+      case 'SHIPPED':
+        return { label: 'Đang giao', className: 'bg-purple-100 text-purple-800' }
+      case 'DELIVERED':
+        return { label: 'Đã giao', className: 'bg-green-100 text-green-800' }
+      case 'CANCELLED':
+        return { label: 'Đã huỷ', className: 'bg-red-100 text-red-800' }
+      case 'COMPLETED':
+        return { label: 'Hoàn thành', className: 'bg-green-100 text-green-800' }
+      default:
+        return { label: status || 'Không rõ', className: 'bg-gray-100 text-gray-600' }
     }
   }
 
-  // Màu badge theo trạng thái — y chang zip
-  const getStatusColor = (status: string) => {
-    switch (status?.toUpperCase()) {
-      case 'PENDING':    return 'bg-yellow-100 text-yellow-800'
-      case 'PROCESSING': return 'bg-blue-100 text-blue-800'
-      case 'SHIPPED':    return 'bg-purple-100 text-purple-800'
-      case 'DELIVERED':  return 'bg-green-100 text-green-800'
-      case 'CANCELLED':  return 'bg-red-100 text-red-800'
-      default:           return 'bg-gray-100 text-gray-800'
+  const handleCancelOrder = async (orderId: number) => {
+    if (!window.confirm('Bạn có chắc muốn huỷ đơn hàng này?')) return
+
+    try {
+      await orderService.cancelOrder(orderId)
+      toast.success('Đã huỷ đơn hàng!')
+      fetchOrders()
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Không thể huỷ đơn')
     }
   }
 
@@ -107,9 +117,28 @@ const OrderHistory: React.FC = () => {
                     {order.totalPrice?.toLocaleString('vi-VN')} ₫
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 inline-flex text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
-                      {getStatusText(order.status)}
-                    </span>
+                    {(() => {
+                      const statusInfo = getStatusInfo(order.status)
+
+                      return (
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`px-2 py-1 inline-flex text-xs font-semibold rounded-full ${statusInfo.className}`}
+                          >
+                            {statusInfo.label}
+                          </span>
+
+                          {order.status?.toUpperCase() === 'PENDING' && (
+                            <button
+                              onClick={() => handleCancelOrder(order.orderId)}
+                              className="text-xs text-red-600 border border-red-200 px-2 py-1 rounded hover:bg-red-50 transition-colors"
+                            >
+                              Huỷ đơn
+                            </button>
+                          )}
+                        </div>
+                      )
+                    })()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <button

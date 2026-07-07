@@ -55,12 +55,14 @@ const MangaCard: React.FC<MangaCardProps> = ({ manga }) => {
 
       <div className="p-4 flex flex-col flex-1">
         {/* Tên manga */}
-        <Link
-          to={`/manga/${manga.id}`}
-          className="text-lg font-semibold text-gray-900 hover:text-indigo-600 transition-colors line-clamp-2"
-        >
-          {manga.title}
-        </Link>
+        <h3 className="text-xs font-semibold text-indigo-700 leading-snug
+          line-clamp-2 min-h-[2.6rem]">
+          {/* line-clamp-2: tối đa 2 dòng, quá thì ...
+              min-h-[2.6rem]: luôn chiếm đúng 2 dòng dù tên ngắn 1 dòng */}
+          <Link to={`/manga/${manga.id}`} className="hover:underline">
+            {manga.title}
+          </Link>
+        </h3>
 
         {/* Tên tác giả */}
         <p className="text-sm text-gray-600 mt-1">

@@ -153,15 +153,18 @@ const Checkout: React.FC = () => {
         voucherCode: voucherValid ? voucherCode.trim() : undefined,
       })
 
+      // Trong handleSubmit, sau khi createOrder thành công
       if (paymentMethod !== 'COD') {
-         navigate(`/payment/${res.data.orderId}` , {
-           state: { method: paymentMethod, total, },
-          }) 
+        // Backend đã xoá cart → sync CartContext ngay
+        try { await clearCart() } catch {}
+        navigate(`/payment/${res.data.orderId}`, {
+          state: { method: paymentMethod, total }
+        })
       } else {
-          await clearCart()
-          navigate('/orders', {
-              state: { message: `Đặt hàng thành công! Mã đơn: #${res.data.orderId}` }
-          })
+        await clearCart()
+        navigate('/orders', {
+          state: { message: `Đặt hàng thành công! Mã đơn: #${res.data.orderId}` }
+        })
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Đặt hàng thất bại. Vui lòng thử lại.')

@@ -119,7 +119,12 @@ public class OrderServiceImpl implements OrderService {
         ComicOrder order = new ComicOrder();
         order.setAccount(account);
         order.setTotalPrice(totalPrice);
-        order.setStatus("PENDING");
+        // COD xử lý ngay, các phương thức khác chờ thanh toán
+        if ("COD".equalsIgnoreCase(request.getPaymentMethod())) {
+            order.setStatus("PROCESSING");
+        } else {
+            order.setStatus("PENDING");
+        }
         order.setShippingAddress(request.getShippingAddress());
         order.setPaymentMethod(
                 request.getPaymentMethod() != null
@@ -154,7 +159,11 @@ public class OrderServiceImpl implements OrderService {
         Payment payment = new Payment();
         payment.setComicOrder(savedOrder);
         payment.setMethod(order.getPaymentMethod());
-        payment.setStatus("PENDING");
+        if ("COD".equalsIgnoreCase(order.getPaymentMethod())) {
+            payment.setStatus("COMPLETED");
+        } else {
+            payment.setStatus("PENDING");
+        }
         payment.setAmount(totalPrice);
         paymentRepository.save(payment);
 

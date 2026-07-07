@@ -1,27 +1,39 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { orderService } from '../../services/orderService'
 import { useCart } from '../../contexts/CartContext'
 import { toast } from 'react-toastify'
+import api from '../../services/api'
 
 const PaymentSimulation: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>()
   const navigate = useNavigate()
   const location = useLocation()
-  const { clearCart } = useCart()
+  const { clearCart, fetchCart } = useCart()
 
   const method = (location.state as any)?.method || 'BANK_TRANSFER'
   const total = (location.state as any)?.total || 0
 
   const [isConfirming, setIsConfirming] = useState(false)
+  const [walletBalance, setWalletBalance] = useState<number | null>(null)
+
+  useEffect(() => {
+    api.get('/auth/wallet').then(res => setWalletBalance(res.data)).catch(() => {})
+    fetchCart()
+  }, [fetchCart])
 
   const handleConfirm = async () => {
+    if (walletBalance !== null && walletBalance < total) {
+      toast.error('Số dư không đủ để thanh toán!')
+      return
+    }
+
     try {
       setIsConfirming(true)
-      // Giả lập thời gian xử lý thanh toán — KHÔNG gọi cổng thanh toán thật
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      await new Promise(resolve => setTimeout(resolve, 800))
       await orderService.confirmPayment(Number(orderId))
-      await clearCart()
+      // clearCart chỉ cập nhật UI — backend đã xoá cart từ createOrder rồi
+      try { await clearCart() } catch {}
       toast.success('Thanh toán thành công!')
       navigate('/orders', {
         state: { message: `Đặt hàng thành công! Mã đơn: #${orderId}` }
@@ -79,7 +91,7 @@ const PaymentSimulation: React.FC = () => {
           </>
         ) : (
           <>
-            {/* Giao diện Momo giả lập — màu hồng đặc trưng */}
+            {/* Giao diện Momo giả lập */}
             <div className="bg-pink-50 rounded-lg p-6 mb-6">
               <span className="text-5xl">📱</span>
               <h1 className="text-xl font-bold text-pink-600 mt-3">

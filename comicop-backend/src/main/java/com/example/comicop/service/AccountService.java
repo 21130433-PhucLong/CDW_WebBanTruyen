@@ -4,7 +4,6 @@ import com.example.comicop.dto.AccountDto;
 import java.util.List;
 
 // Interface định nghĩa các method service có
-// Tách interface và implementation để dễ thay đổi logic sau này
 // Controller chỉ biết đến interface, không biết đến implementation
 public interface AccountService {
 
