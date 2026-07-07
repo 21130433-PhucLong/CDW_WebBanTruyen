@@ -217,4 +217,35 @@ public class OrderServiceImpl implements OrderService {
 
         return mapToDto(orderRepository.save(order));
     }
+
+    @Override
+    public OrderDto confirmPayment(Long orderId, Long accountId) {
+        ComicOrder order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy đơn hàng: " + orderId));
+
+        if (!order.getAccount().getUserID().equals(accountId)) {
+            throw new RuntimeException("Không có quyền xác nhận đơn hàng này");
+        }
+
+        Account account = order.getAccount();
+        java.math.BigDecimal orderTotal = order.getTotalPrice();
+
+        if (account.getWalletBalance().compareTo(orderTotal) < 0) {
+            throw new RuntimeException(
+                    "Số dư không đủ để thanh toán. Số dư hiện tại: "
+                            + account.getWalletBalance() + "đ");
+        }
+
+        account.setWalletBalance(account.getWalletBalance().subtract(orderTotal));
+        accountRepository.save(account);
+
+        Payment payment = paymentRepository.findByComicOrder_OrderId(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy payment"));
+        payment.setStatus("COMPLETED");
+        paymentRepository.save(payment);
+
+        order.setStatus("PROCESSING");
+        return mapToDto(orderRepository.save(order));
+    }
 }

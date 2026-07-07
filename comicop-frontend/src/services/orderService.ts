@@ -24,4 +24,8 @@ export const orderService = {
   // Huỷ đơn hàng — POST /api/orders/{id}/cancel
   cancelOrder: (orderId: number) =>
     api.post(`/orders/${orderId}/cancel`),
+
+  // Thêm vào object orderService
+  confirmPayment: (orderId: number) =>
+    api.post<Order>(`/orders/${orderId}/confirm-payment`),
 }

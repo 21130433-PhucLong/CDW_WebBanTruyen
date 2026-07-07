@@ -156,4 +156,11 @@ public class AuthServiceImpl implements AuthService {
         accountRepository.save(account);
     }
 
+    @Override
+    public java.math.BigDecimal getWalletBalance(String email) {
+        Account account = accountRepository.findByEmail(email);
+        if (account == null) throw new ResourceNotFoundException("Không tìm thấy account");
+        return account.getWalletBalance();
+    }
+
 }

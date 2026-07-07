@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMoneyBill } from '@fortawesome/free-solid-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faMoneyBill } from '@fortawesome/free-solid-svg-icons'
 import { useCart } from '../../contexts/CartContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { orderService } from '../../services/orderService'
@@ -29,6 +29,9 @@ const Checkout: React.FC = () => {
   const [voucherValid, setVoucherValid] = useState(false)
   const [discountPercent, setDiscountPercent] = useState(0)
   const [validatingVoucher, setValidatingVoucher] = useState(false)
+
+  // Thêm PT Thanh toán
+  const [paymentMethod, setPaymentMethod] = useState<'COD' | 'BANK_TRANSFER' | 'MOMO'>('COD')
 
   // Submit
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -145,15 +148,21 @@ const Checkout: React.FC = () => {
 
       const res = await orderService.createOrder({
         shippingAddress: `${fullName} - ${phone} - ${address}`,
-        paymentMethod: 'COD',
+        paymentMethod: paymentMethod,
         note: note.trim() || undefined,
         voucherCode: voucherValid ? voucherCode.trim() : undefined,
       })
 
-      await clearCart()
-      navigate('/orders', {
-        state: { message: `Đặt hàng thành công! Mã đơn: #${res.data.orderId}` }
-      })
+      if (paymentMethod !== 'COD') {
+         navigate(`/payment/${res.data.orderId}` , {
+           state: { method: paymentMethod, total, },
+          }) 
+      } else {
+          await clearCart()
+          navigate('/orders', {
+              state: { message: `Đặt hàng thành công! Mã đơn: #${res.data.orderId}` }
+          })
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Đặt hàng thất bại. Vui lòng thử lại.')
     } finally {
@@ -345,24 +354,69 @@ const Checkout: React.FC = () => {
               </div>
             </div>
 
-            {/* Phương thức thanh toán */}
+            {/* Phương thức thanh toán — 3 lựa chọn */}
             <div>
               <h2 className="text-xl font-bold mb-4">Phương thức thanh toán</h2>
-              <div className="border-2 border-indigo-500 bg-indigo-50 rounded-lg p-4">
-                <div className="flex items-center space-x-3">
-                  <FontAwesomeIcon icon={faMoneyBill}
-                    className="h-6 w-6 text-indigo-600 flex-shrink-0" />
+              <div className="space-y-3">
+
+                {/* COD */}
+                <label className={`flex items-center gap-3 p-4 rounded-lg border-2
+                  cursor-pointer transition-colors
+                  ${paymentMethod === 'COD'
+                    ? 'border-indigo-500 bg-indigo-50'
+                    : 'border-gray-200 hover:border-gray-300'}`}>
+                  <input type="radio" name="payment" value="COD"
+                    checked={paymentMethod === 'COD'}
+                    onChange={() => setPaymentMethod('COD')}
+                    className="w-4 h-4 text-indigo-600" />
+                  <span className="text-2xl">💵</span>
                   <div className="flex-1">
-                    <h3 className="text-sm font-medium text-gray-900">
+                    <p className="font-medium text-gray-900">
                       Thanh toán khi nhận hàng (COD)
-                    </h3>
+                    </p>
                     <p className="text-sm text-gray-500">
                       Thanh toán bằng tiền mặt khi nhận hàng
                     </p>
                   </div>
-                  <input type="radio" checked readOnly
-                    className="h-4 w-4 text-indigo-600" />
-                </div>
+                </label>
+
+                {/* Chuyển khoản ngân hàng */}
+                <label className={`flex items-center gap-3 p-4 rounded-lg border-2
+                  cursor-pointer transition-colors
+                  ${paymentMethod === 'BANK_TRANSFER'
+                    ? 'border-indigo-500 bg-indigo-50'
+                    : 'border-gray-200 hover:border-gray-300'}`}>
+                  <input type="radio" name="payment" value="BANK_TRANSFER"
+                    checked={paymentMethod === 'BANK_TRANSFER'}
+                    onChange={() => setPaymentMethod('BANK_TRANSFER')}
+                    className="w-4 h-4 text-indigo-600" />
+                  <span className="text-2xl">🏦</span>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">
+                      Chuyển khoản ngân hàng
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Chuyển khoản qua QR hoặc số tài khoản
+                    </p>
+                  </div>
+                </label>
+
+                {/* Momo */}
+                <label className={`flex items-center gap-3 p-4 rounded-lg border-2
+                  cursor-pointer transition-colors
+                  ${paymentMethod === 'MOMO'
+                    ? 'border-pink-500 bg-pink-50'
+                    : 'border-gray-200 hover:border-gray-300'}`}>
+                  <input type="radio" name="payment" value="MOMO"
+                    checked={paymentMethod === 'MOMO'}
+                    onChange={() => setPaymentMethod('MOMO')}
+                    className="w-4 h-4 text-pink-600" />
+                  <span className="text-2xl">📱</span>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">Ví Momo</p>
+                    <p className="text-sm text-gray-500">Thanh toán qua ứng dụng Momo</p>
+                  </div>
+                </label>
               </div>
             </div>
           </div>

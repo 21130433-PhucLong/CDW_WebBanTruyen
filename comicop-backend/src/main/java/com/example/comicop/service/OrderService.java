@@ -17,4 +17,6 @@ public interface OrderService {
 
     // Huỷ đơn hàng — chỉ huỷ được khi status = PENDING
     OrderDto cancelOrder(Long orderId, Long accountId);
+
+    OrderDto confirmPayment(Long orderId, Long accountId);
 }

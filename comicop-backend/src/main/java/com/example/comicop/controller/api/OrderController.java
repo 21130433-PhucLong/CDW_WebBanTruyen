@@ -60,4 +60,15 @@ public class OrderController {
         return ResponseEntity.ok(
                 orderService.cancelOrder(id, getAccountId(email)));
     }
+
+    // POST /api/orders/{id}/confirm-payment — xác nhận đã thanh toán (giả lập)
+    // Dùng cho CK ngân hàng và Momo — COD không cần gọi endpoint này
+    @PostMapping("/{id}/confirm-payment")
+    public ResponseEntity<OrderDto> confirmPayment(
+            @AuthenticationPrincipal String email,
+            @PathVariable Long id) {
+        return ResponseEntity.ok(
+                orderService.confirmPayment(id, getAccountId(email)));
+    }
+
 }

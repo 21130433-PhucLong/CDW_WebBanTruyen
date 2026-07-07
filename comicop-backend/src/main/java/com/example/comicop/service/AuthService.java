@@ -7,6 +7,8 @@ import com.example.comicop.dto.ChangePasswordRequest;
 import com.example.comicop.dto.RegisterRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+
 public interface AuthService {
     // Đăng ký tài khoản mới, trả về token + user
     AuthResponse register(RegisterRequest request);
@@ -23,4 +25,6 @@ public interface AuthService {
     AccountDto updateProfile(String email, AccountDto accountDto);
 
     void changePassword(String email, ChangePasswordRequest request);
+
+    BigDecimal getWalletBalance(String email);
 }

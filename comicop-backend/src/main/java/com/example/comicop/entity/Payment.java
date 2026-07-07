@@ -21,9 +21,9 @@ public class Payment {
     @Column(name = "method")
     private String method;
 
-    // Trạng thái thanh toán: PENDING, COMPLETED
+    // Trạng thái thanh toán: PENDING, COMPLETED, FAILED
     @Column(name = "status")
-    private String status = "PENDING";
+    private String status;
 
     @Column(name = "amount", precision = 10, scale = 2)
     private BigDecimal amount;

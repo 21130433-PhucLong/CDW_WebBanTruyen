@@ -20,8 +20,9 @@ import Profile from './pages/user/Profile'
 import ChangePassword from './pages/user/ChangePassword'
 import Wishlist from './pages/Wishlist'
 import AddressBook from './pages/user/AddressBook'
+import PaymentSimulation from './pages/checkout/PaymentSimulation'
 
-// Các trang còn lại vẫn là placeholder — sẽ thay dần từng ngày
+
 const Admin = () => <div style={{padding:'2rem'}}>⚙️ Admin</div>
 
 const App: React.FC = () => {
@@ -62,6 +63,9 @@ const App: React.FC = () => {
          }>
            <Route index element={<OrderHistory />} />
          </Route>
+         <Route path="payment/:orderId" element={
+            <PrivateRoute><PaymentSimulation /></PrivateRoute>
+          } />
           <Route path="admin" element={
             <PrivateRoute><Admin /></PrivateRoute>
           } />

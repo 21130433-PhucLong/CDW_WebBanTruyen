@@ -89,4 +89,11 @@ public class AuthController {
         authService.changePassword(email, request);
         return ResponseEntity.ok("Đổi mật khẩu thành công");
     }
+
+    @GetMapping("/wallet")
+    public ResponseEntity<java.math.BigDecimal> getWalletBalance(
+            @AuthenticationPrincipal String email) {
+        return ResponseEntity.ok(authService.getWalletBalance(email));
+    }
+
 }

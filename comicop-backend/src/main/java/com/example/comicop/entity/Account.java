@@ -2,6 +2,8 @@ package com.example.comicop.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 // @Entity — đánh dấu class này là 1 bảng trong database
@@ -59,6 +61,9 @@ public class Account {
     @Column(name = "is_activated")
     private boolean activated = true;
 
+    @Column(name = "wallet_balance")
+    private BigDecimal walletBalance = new BigDecimal("10000000");
+
     // Quan hệ với Cart — 1 account có 1 giỏ hàng
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnore
@@ -73,5 +78,5 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Wishlist> wishlists;
-    // khi tạo entity Order và Cart ở Ngày 6
+
 }
